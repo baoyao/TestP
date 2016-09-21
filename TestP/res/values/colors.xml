@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="key_down">@drawable/white_down</drawable>
+    <drawable name="key_up">@drawable/white_up</drawable>
+</resources>
