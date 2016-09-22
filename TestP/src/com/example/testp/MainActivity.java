@@ -255,7 +255,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        int sId = (int) v.getTag();
+        int sId = (Integer) v.getTag();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
     }
 
