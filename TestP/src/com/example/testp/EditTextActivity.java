@@ -47,8 +47,8 @@ public class EditTextActivity extends Activity {
             }
             text = edit.getText().toString();
 
-            Log.v("tt", "text: " + text + " startSelection: " + nowSelection+" substring: ["+text.substring(text.length() - 1)+"]");
-            if (text.length() > 0 && " ".equals(text.substring(text.length() - 1))) {
+            boolean bool=(text.length() > 0 && " ".equals(text.substring(nowSelection - 1,nowSelection)));
+            if (bool) {
                 ea.delete(nowSelection - 1, nowSelection);
                 nowSelection -= 1;
             }
