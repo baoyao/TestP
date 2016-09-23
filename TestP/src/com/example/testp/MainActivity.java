@@ -1,7 +1,6 @@
 package com.example.testp;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
