@@ -1,6 +1,8 @@
 package com.example.testp;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.res.AssetManager;
@@ -21,19 +23,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private SoundPool mSoundPool;
     private int[] mSoundId;
-    private int[] mRawSounds = new int[] { R.raw.piano1, R.raw.piano2, R.raw.piano3, R.raw.piano4, R.raw.piano5,
-            R.raw.piano6, R.raw.piano7, R.raw.piano8, R.raw.piano9, R.raw.piano10, R.raw.piano11, R.raw.piano12,
-            R.raw.piano13, R.raw.piano14, R.raw.piano15, R.raw.piano16, R.raw.piano17, R.raw.piano18, R.raw.piano19,
-            R.raw.piano20, R.raw.piano21, R.raw.piano22, R.raw.piano23, R.raw.piano24, R.raw.piano25, R.raw.piano26,
-            R.raw.piano27, R.raw.piano28, R.raw.piano29, R.raw.piano30, R.raw.piano31, R.raw.piano32, R.raw.piano33,
-            R.raw.piano34, R.raw.piano35, R.raw.piano36, R.raw.piano37, R.raw.piano38, R.raw.piano39, R.raw.piano40,
-            R.raw.piano41, R.raw.piano42, R.raw.piano43, R.raw.piano44, R.raw.piano45, R.raw.piano46, R.raw.piano47,
-            R.raw.piano48, R.raw.piano49, R.raw.piano50, R.raw.piano51, R.raw.piano52, R.raw.piano53, R.raw.piano54,
-            R.raw.piano55, R.raw.piano56, R.raw.piano57, R.raw.piano58, R.raw.piano59, R.raw.piano60, R.raw.piano61,
-            R.raw.piano62, R.raw.piano63, R.raw.piano64, R.raw.piano65, R.raw.piano66, R.raw.piano67, R.raw.piano68,
-            R.raw.piano69, R.raw.piano70, R.raw.piano71, R.raw.piano72, R.raw.piano73, R.raw.piano74, R.raw.piano75,
-            R.raw.piano76, R.raw.piano77, R.raw.piano78, R.raw.piano79, R.raw.piano80, R.raw.piano81, R.raw.piano82,
-            R.raw.piano83, R.raw.piano84, R.raw.piano85, R.raw.piano86, R.raw.piano87, R.raw.piano88 };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +43,9 @@ public class MainActivity extends Activity implements OnClickListener {
             protected Integer doInBackground(Object... params) {
                 // TODO Auto-generated method stub
                 try {
-                    // loadAssetSounds();
-                    loadRawSounds();
-                } catch (Exception e) {
+                     loadAssetSounds();
+//                    loadRawSounds();
+                } catch (IOException e) {
                     e.printStackTrace();
                     Log.v("tt", "Exception " + e);
                 }
@@ -64,15 +53,19 @@ public class MainActivity extends Activity implements OnClickListener {
             }
 
             private void loadAssetSounds() throws IOException {
-                String[] mSounds = mAssetManager.list("sound");
+                String[] mSounds = mAssetManager.list("sounds");
                 int sCount = mSounds.length;
+                Log.v("tt","sCount: "+sCount);
+                Log.v("tt","list: "+Arrays.toString(mSounds));
                 // sort
                 String temp;
+                String piano="piano";
                 for (int i = 0; i < sCount - 1; i++) {
                     for (int j = i + 1; j < sCount; j++) {
-                        String str1 = mSounds[i].substring(0, mSounds[i].indexOf("."));
+                        String str1 = mSounds[i].substring(piano.length()-1, mSounds[i].indexOf("."));
+                        Log.v("tt","mSounds[i]: "+mSounds[i]+" str1: "+str1);
                         int num1 = Integer.parseInt(str1);
-                        String str2 = mSounds[j].substring(0, mSounds[j].indexOf("."));
+                        String str2 = mSounds[j].substring(piano.length()-1, mSounds[j].indexOf("."));
                         int num2 = Integer.parseInt(str2);
                         if (num1 > num2) {
                             temp = mSounds[i];
@@ -81,12 +74,12 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                     }
                 }
-
+                
                 mSoundId = new int[sCount];
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < sCount; i++) {
                     count++;
-                    mSoundId[i] = mSoundPool.load(mAssetManager.openFd("sound/" + mSounds[i]), 1);
+                    mSoundId[i] = mSoundPool.load(mAssetManager.openFd("sounds/" + mSounds[i]), 1);
                     this.publishProgress(count);
                     if (count >= MAX_SOUNDS) {
                         break;
@@ -94,18 +87,18 @@ public class MainActivity extends Activity implements OnClickListener {
                 }
             }
 
-            private void loadRawSounds() {
-                mSoundId = new int[mRawSounds.length];
-                int count = 0;
-                for (int i = START_LOAD_INDEX; i < mRawSounds.length; i++) {
-                    mSoundId[i] = mSoundPool.load(MainActivity.this, mRawSounds[i], 1);
-                    this.publishProgress(count);
-                    count++;
-                    if (count >= MAX_SOUNDS) {
-                        break;
-                    }
-                }
-            }
+//            private void loadRawSounds() {
+//                mSoundId = new int[mRawSounds.length];
+//                int count = 0;
+//                for (int i = START_LOAD_INDEX; i < mRawSounds.length; i++) {
+//                    mSoundId[i] = mSoundPool.load(MainActivity.this, mRawSounds[i], 1);
+//                    this.publishProgress(count);
+//                    count++;
+//                    if (count >= MAX_SOUNDS) {
+//                        break;
+//                    }
+//                }
+//            }
 
             @Override
             protected void onPreExecute() {
