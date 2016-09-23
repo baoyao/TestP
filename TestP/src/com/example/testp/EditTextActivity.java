@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,67 +27,108 @@ public class EditTextActivity extends Activity {
 
     }
 
+    
     public void onButtonClick(View view) {
 
-        int spaceIndex = 4;
+        String SPLIT_TEXT=" ";
+        int SPLIT_INDEX = 4;
+        
         Editable ea = edit.getText();
-        int nowSelection = edit.getSelectionStart();
+        int startSelection = edit.getSelectionStart();
+        int currentSelection = startSelection;
         String text = edit.getText().toString();
 
+        int startSpaces = countTextsInContent(text,SPLIT_TEXT);
+        
         switch (view.getId()) {
         case R.id.btn_del:
-            if (nowSelection == 0) {
+            if (currentSelection == 0) {
                 return;
             }
             text = edit.getText().toString();
 
-            boolean bool = (text.length() > 0 && " ".equals(text.substring(
-                    nowSelection - 1, nowSelection)));
+            boolean bool = (text.length() > 0 && SPLIT_TEXT.equals(text.substring(
+                    currentSelection - 1, currentSelection)));
             if (bool) {
-                ea.delete(nowSelection - 1, nowSelection);
-                nowSelection -= 1;
+                ea.delete(currentSelection - 1, currentSelection);
+                ea.delete(currentSelection - 1-1, currentSelection-1);
+                currentSelection -= 1;
+            }else{
+                ea.delete(currentSelection - 1, currentSelection);
+                currentSelection -= 1;
             }
 
-            if (nowSelection == 0) {
-                return;
-            }
-
-            ea.delete(nowSelection - 1, nowSelection);
-            nowSelection -= 1;
             break;
         default:
-            ea.insert(nowSelection, ((Button) view).getText().toString());
-            nowSelection += 1;
+            ea.insert(currentSelection, ((Button) view).getText().toString());
+            currentSelection += 1;
             break;
         }
+        
         text = edit.getText().toString();
+        text=splitString(text,SPLIT_TEXT,SPLIT_INDEX);
+        edit.setText(text);
 
-        int startSpace = text.length() / (spaceIndex + 1);
+        int endSpaces = countTextsInContent(text,SPLIT_TEXT);
+        int changeSpaces=(endSpaces - startSpaces);
 
-        text = text.replaceAll(" ", "");
-        // 添加空格 begin
-        if (text.length() >= spaceIndex) {
-            for (int i = 0; i < text.length() / spaceIndex; i++) {
-                int subIndex = i * (spaceIndex + 1);
-                if (subIndex + spaceIndex > text.length()) {
+        int insertSelection=0;
+        
+        if((currentSelection + changeSpaces)!=text.length()){//在中间插入数字时
+            if(view.getId()==R.id.btn_del){
+                if(changeSpaces==0){
+                    if(startSelection%5==0){
+                        insertSelection=-1;
+                    }
+                }else if(changeSpaces==-1){
+                    if(startSelection%5!=0){
+                        insertSelection=1;
+                    }
+                }
+            }else{
+                if(changeSpaces==0){
+                    if(startSelection%5==4){
+                        insertSelection=1;
+                    }
+                }else if(changeSpaces==1){
+                    if(startSelection%5!=4){
+                        insertSelection=-1;
+                    }
+                }
+            }
+        }
+        //移动光标
+        Selection.setSelection((Spannable) edit.getText(), insertSelection+currentSelection + changeSpaces);
+    }
+    
+
+    private int countTextsInContent(String content, String text) {
+        int count = 0;
+        while (content.indexOf(text) != -1) {
+            count++;
+            content = content.substring(content.indexOf(text) + text.length());
+        }
+        return count;
+    }
+    
+    private String splitString(String content,String splitText,int splitIndex){
+        if (content.length() >= splitIndex) {
+            content = content.replaceAll(splitText, "");
+            for (int i = 0; i < content.length() / splitIndex; i++) {
+                int subIndex = i * (splitIndex + 1);
+                if (subIndex + splitIndex > content.length()) {
                     break;
                 }
                 if (i == 0) {
-                    text = text.substring(0, spaceIndex) + " "
-                            + text.substring(spaceIndex);
+                    content = content.substring(0, splitIndex) + splitText
+                            + content.substring(splitIndex);
                 } else {
-                    text = text.substring(0, subIndex + spaceIndex)
-                            + " " + text.substring(subIndex + spaceIndex);
+                    content = content.substring(0, subIndex + splitIndex)
+                            + splitText + content.substring(subIndex + splitIndex);
                 }
             }
         }
-        edit.setText(text);
-        // 添加空格 end
-
-        int endSpace = text.length() / (spaceIndex + 1);
-        
-        //移动光标
-        Selection.setSelection((Spannable) edit.getText(), nowSelection + (endSpace - startSpace));
+        return content;
     }
     
 
