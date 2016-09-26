@@ -3,5 +3,24 @@
 
     <string name="app_name">TestP</string>
     <string name="hello_world">Hello world!</string>
+    
+    <string-array name="sound_list">
+        <item >1</item>
+        <item >2</item>
+        <item >3</item>
+        <item >4</item>
+        <item >5</item>
+        <item >6</item>
+        <item >7</item>
+        
+        <item >1低1</item>
+        <item >2低1</item>
+        <item >3低1</item>
+        <item >4低1</item>
+        <item >5低1</item>
+        <item >6低1</item>
+        <item >7低1</item>
+        
+    </string-array>
 
 </resources>
