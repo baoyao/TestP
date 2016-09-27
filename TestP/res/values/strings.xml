@@ -3,24 +3,158 @@
 
     <string name="app_name">TestP</string>
     <string name="hello_world">Hello world!</string>
-    
+
     <string-array name="sound_list">
-        <item >1</item>
-        <item >2</item>
-        <item >3</item>
-        <item >4</item>
-        <item >5</item>
-        <item >6</item>
-        <item >7</item>
-        
-        <item >1低1</item>
-        <item >2低1</item>
-        <item >3低1</item>
-        <item >4低1</item>
-        <item >5低1</item>
-        <item >6低1</item>
-        <item >7低1</item>
-        
+        <item>6低4</item>
+        <item>67低4</item>
+        <item>7低4</item>
+        <item>1低3</item>
+        <item>12低3</item>
+        <item>2低3</item>
+        <item>23低3</item>
+        <item>3低3</item>
+        <item>4低3</item>
+        <item>45低3</item>
+        <item>5低3</item>
+        <item>56低3</item>
+        <item>6低3</item>
+        <item>67低3</item>
+        <item>7低3</item>
+        <item>1低2</item>
+        <item>12低2</item>
+        <item>2低2</item>
+        <item>23低2</item>
+        <item>3低2</item>
+        <item>4低2</item>
+        <item>45低2</item>
+        <item>5低2</item>
+        <item>56低2</item>
+        <item>6低2</item>
+        <item>67低2</item>
+        <item>7低2</item>
+        <item>1低1</item>
+        <item>12低1</item>
+        <item>2低1</item>
+        <item>23低1</item>
+        <item>3低1</item>
+        <item>4低1</item>
+        <item>45低1</item>
+        <item>5低1</item>
+        <item>56低1</item>
+        <item>6低1</item>
+        <item>67低1</item>
+        <item>7低1</item>
+        <item>1</item>
+        <item>12</item>
+        <item>2</item>
+        <item>23</item>
+        <item>3</item>
+        <item>4</item>
+        <item>45</item>
+        <item>5</item>
+        <item>56</item>
+        <item>6</item>
+        <item>67</item>
+        <item>7</item>
+        <item>1高1</item>
+        <item>12高1</item>
+        <item>2高1</item>
+        <item>23高1</item>
+        <item>3高1</item>
+        <item>4高1</item>
+        <item>45高1</item>
+        <item>5高1</item>
+        <item>56高1</item>
+        <item>6高1</item>
+        <item>67高1</item>
+        <item>7高1</item>
+        <item>1高2</item>
+        <item>12高2</item>
+        <item>2高2</item>
+        <item>23高2</item>
+        <item>3高2</item>
+        <item>4高2</item>
+        <item>45高2</item>
+        <item>5高2</item>
+        <item>56高2</item>
+        <item>6高2</item>
+        <item>67高2</item>
+        <item>7高2</item>
+        <item>1高3</item>
+        <item>12高3</item>
+        <item>2高3</item>
+        <item>23高3</item>
+        <item>3高3</item>
+        <item>4高3</item>
+        <item>45高3</item>
+        <item>5高3</item>
+        <item>56高3</item>
+        <item>6高3</item>
+        <item>67高3</item>
+        <item>7高3</item>
+        <item>1高4</item>
+    </string-array>
+    <string-array name="times">
+        <item>00</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+        <item>40</item>
+        <item>41</item>
+        <item>42</item>
+        <item>43</item>
+        <item>44</item>
+        <item>45</item>
+        <item>46</item>
+        <item>47</item>
+        <item>48</item>
+        <item>49</item>
+        <item>50</item>
+        <item>51</item>
+        <item>52</item>
+        <item>53</item>
+        <item>54</item>
+        <item>55</item>
+        <item>56</item>
+        <item>57</item>
+        <item>58</item>
+        <item>59</item>
     </string-array>
 
 </resources>

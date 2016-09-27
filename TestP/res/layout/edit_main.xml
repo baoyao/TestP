@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#ffffff" >
+    android:background="#ffffff"
+    android:orientation="vertical" >
 
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:onClick="onSaveButtonClick"
         android:text="Save" />
 
@@ -18,20 +19,25 @@
         android:layout_marginTop="5dp"
         android:background="#000000" />
 
-    <LinearLayout
-        android:id="@+id/items_layout"
+    <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:layout_marginTop="5dp">
 
-        <Button
-            android:id="@+id/add"
+        <LinearLayout
+            android:id="@+id/items_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onAddButtonClick"
-            android:text="Add" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onAddButtonClick"
+                android:text="Add" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </LinearLayout>
