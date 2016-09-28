@@ -10,9 +10,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.testp.EditItemView.OnAddListener;
 import com.example.testp.EditItemView.OnDeleteListener;
+import com.example.testp.TimeController.OnTimeChangedListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public class EditTimeActivity extends Activity {
 
-    private LinearLayout itemsLayout;
+    private LinearLayout mItemsLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +32,63 @@ public class EditTimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
 
-        itemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
+        mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
+
+        PublicCache.TimeController = new TimeController();
+        PublicCache.TimeController.setOnTimeChangedListener(new OnTimeChangedListener() {
+            @Override
+            public void onChanged(EditItemView itemView) {
+                List<EditItemView> list = new ArrayList<EditItemView>();
+                for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
+                    if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
+                        EditItemView tempItemView = (EditItemView) mItemsLayout.getChildAt(i);
+                        if (tempItemView.getIndex() > itemView.getIndex()) {
+                            long time1 = calcMillis(tempItemView.getTime());
+                            long time2 = calcMillis(itemView.getTime());
+                            if (time1 < time2) {
+                                list.add(tempItemView);
+                            }
+                        }
+                    }
+                }
+                if (list.size() > 0) {
+                    String str = "";
+                    for (int i = 0; i < list.size(); i++) {
+                        str += "" + list.get(i).getIndex();
+                        if (i != list.size() - 1) {
+                            str += "/";
+                        }
+                    }
+                    Toast.makeText(EditTimeActivity.this, "第" + str+"个的时间小于前面的！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private long calcMillis(int[] time) {
+        return (time[0] * 60 * 60) + (time[1] * 60) + time[2];
     }
 
     public void onAddButtonClick(View view) {
-        EditItemView editItemView = createEditView(itemsLayout.getChildCount());
-        itemsLayout.addView(editItemView, itemsLayout.getChildCount() - 1);
+        EditItemView editItemView = createEditView(mItemsLayout.getChildCount());
+        mItemsLayout.addView(editItemView, mItemsLayout.getChildCount() - 1);
         updateItemsIndex();
+        updateItemsTime(editItemView);
     }
 
     private void updateItemsIndex() {
-        for (int i = 0; i < itemsLayout.getChildCount(); i++) {
-            if (itemsLayout.getChildAt(i) instanceof EditItemView) {
-                ((EditItemView) itemsLayout.getChildAt(i)).setIndex(i + 1);
+        for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
+            if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
+                ((EditItemView) mItemsLayout.getChildAt(i)).setIndex(i + 1);
             }
+        }
+    }
+
+    private void updateItemsTime(EditItemView itemView) {
+        int index = itemView.getIndex();
+        if (index > 1) {
+            ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(((EditItemView) mItemsLayout
+                    .getChildAt(index - 1 - 1)).getTime());
         }
     }
 
@@ -57,7 +102,7 @@ public class EditTimeActivity extends Activity {
         editItemView.setOnDeleteListener(new OnDeleteListener() {
             @Override
             public void onClick(View v) {
-                itemsLayout.removeView(v);
+                mItemsLayout.removeView(v);
                 updateItemsIndex();
             }
         });
@@ -65,8 +110,10 @@ public class EditTimeActivity extends Activity {
         editItemView.setOnAddListener(new OnAddListener() {
             @Override
             public void onClick(int index, View v) {
-                itemsLayout.addView(createEditView(index), index);
+                EditItemView subEditItemView = createEditView(index);
+                mItemsLayout.addView(subEditItemView, index);
                 updateItemsIndex();
+                updateItemsTime(subEditItemView);
             }
         });
         return editItemView;
@@ -75,9 +122,9 @@ public class EditTimeActivity extends Activity {
     public void onSaveButtonClick(View view) {
         Gson gson = new Gson();
         List<SoundInfo> list = new ArrayList<SoundInfo>();
-        for (int i = 0; i < itemsLayout.getChildCount(); i++) {
-            if (itemsLayout.getChildAt(i) instanceof EditItemView) {
-                EditItemView item = (EditItemView) itemsLayout.getChildAt(i);
+        for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
+            if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
+                EditItemView item = (EditItemView) mItemsLayout.getChildAt(i);
                 int index = item.getIndex();
                 int sound = item.getSoundIndex();
                 int[] time = item.getTime();
@@ -93,6 +140,10 @@ public class EditTimeActivity extends Activity {
         }.getType());
 
         Log.v("tt", "soundJson: " + soundJson);
+        PublicCache.SongJson=soundJson;
+        if (PublicCache.SoundPlayer != null) {
+            PublicCache.SoundPlayer.play(PublicCache.SongJson);
+        }
     }
 
 }

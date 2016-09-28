@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -42,7 +43,7 @@ public class MainActivity extends Activity implements OnClickListener {
             protected Integer doInBackground(Object... params) {
                 // TODO Auto-generated method stub
                 try {
-                     loadAssetSounds();
+                    loadAssetSounds();
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.v("tt", "Exception " + e);
@@ -51,12 +52,12 @@ public class MainActivity extends Activity implements OnClickListener {
             }
 
             private void loadAssetSounds() throws IOException {
-                String soundDir="sound";
+                String soundDir = "sound";
                 String[] mSounds = mAssetManager.list(soundDir);
                 int sCount = mSounds.length;
                 // sort
                 String temp;
-                String piano="piano";
+                String piano = "piano";
                 for (int i = 0; i < sCount - 1; i++) {
                     for (int j = i + 1; j < sCount; j++) {
                         String str1 = mSounds[i].substring(piano.length(), mSounds[i].indexOf("."));
@@ -70,12 +71,12 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                     }
                 }
-                
+
                 mSoundId = new int[sCount];
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < sCount; i++) {
                     count++;
-                    mSoundId[i] = mSoundPool.load(mAssetManager.openFd(soundDir+"/" + mSounds[i]), 1);
+                    mSoundId[i] = mSoundPool.load(mAssetManager.openFd(soundDir + "/" + mSounds[i]), 1);
                     this.publishProgress(count);
                     if (count >= MAX_SOUNDS) {
                         break;
@@ -94,6 +95,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 // TODO Auto-generated method stub
                 super.onPostExecute(soundsLength);
                 dismissDialog();
+                PublicCache.SoundPlayer = new SoundPlayer(mSoundPool);
                 mWhiteLayout.removeAllViews();
                 mBlackLayout.removeAllViews();
 
@@ -101,9 +103,9 @@ public class MainActivity extends Activity implements OnClickListener {
                 for (int i = START_LOAD_INDEX; i < soundsLength; i++) {
                     count++;
                     if (isBlackKey(count)) {
-                        mBlackLayout.addView(buildBlackKey(count, (i+1)));
+                        mBlackLayout.addView(buildBlackKey(count, (i + 1)));
                     } else {
-                        mWhiteLayout.addView(buildWhiteKey(count, (i+1)));
+                        mWhiteLayout.addView(buildWhiteKey(count, (i + 1)));
                     }
                     if (count >= MAX_SOUNDS) {
                         break;
@@ -143,22 +145,22 @@ public class MainActivity extends Activity implements OnClickListener {
     private int calcBlackKeyLeftMargin(int id) {
         int marginLeft = 0;
         switch (getEndResult(id - 3)) {
-        case KEY_START_INDEX - 3://第一个黑键
+        case KEY_START_INDEX - 3:// 第一个黑键
             marginLeft = (WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2)) + (WHITE_KEY_LEFT_MARGIN * 2);
             break;
-        case KEY_START_INDEX://两个黑键组的第一个黑键
+        case KEY_START_INDEX:// 两个黑键组的第一个黑键
             marginLeft = ((WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2)) * 2) + (WHITE_KEY_LEFT_MARGIN * 2);
             break;
-        case KEY_START_INDEX + 2://两个黑键组的第二个黑键
+        case KEY_START_INDEX + 2:// 两个黑键组的第二个黑键
             marginLeft = (WHITE_KEY_WIDTH - BLACK_KEY_WIDTH) + WHITE_KEY_LEFT_MARGIN;
             break;
-        case KEY_START_INDEX + 5://三个黑键组的第一个黑键
+        case KEY_START_INDEX + 5:// 三个黑键组的第一个黑键
             marginLeft = ((WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2)) * 2) + (WHITE_KEY_LEFT_MARGIN * 2);
             break;
-        case KEY_START_INDEX + 7://三个黑键组的第二个黑键
+        case KEY_START_INDEX + 7:// 三个黑键组的第二个黑键
             marginLeft = (WHITE_KEY_WIDTH - BLACK_KEY_WIDTH) + WHITE_KEY_LEFT_MARGIN;
             break;
-        case KEY_START_INDEX + 9://三个黑键组的第三个黑键
+        case KEY_START_INDEX + 9:// 三个黑键组的第三个黑键
             marginLeft = (WHITE_KEY_WIDTH - BLACK_KEY_WIDTH) + WHITE_KEY_LEFT_MARGIN;
             break;
         }
@@ -179,7 +181,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private boolean isBlackKey(int count) {
-        if (count <= TOTAL_CELL_KEYS + 3) {//第一组黑键特殊处理(因为多了第一个黑键)
+        if (count <= TOTAL_CELL_KEYS + 3) {// 第一组黑键特殊处理(因为多了第一个黑键)
             return count == KEY_START_INDEX || count == KEY_START_INDEX + 3 || count == KEY_START_INDEX + 5
                     || count == KEY_START_INDEX + 8 || count == KEY_START_INDEX + 10 || count == KEY_START_INDEX + 12;
         } else {
@@ -233,6 +235,31 @@ public class MainActivity extends Activity implements OnClickListener {
     public void onClick(View v) {
         int sId = (Integer) v.getTag();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
+    }
+
+    public void onControlButtonClick(View view) {
+        switch (view.getId()) {
+        case R.id.jump_to_edit:
+            startActivity(new Intent(MainActivity.this, EditTimeActivity.class));
+            break;
+        case R.id.play:
+            if(PublicCache.SoundPlayer!=null){
+                PublicCache.SoundPlayer.play(PublicCache.SongJson);
+            }
+            break;
+        case R.id.pause:
+            if(PublicCache.SoundPlayer!=null){
+                PublicCache.SoundPlayer.pause();
+            }
+            break;
+        case R.id.resume:
+            if(PublicCache.SoundPlayer!=null){
+                PublicCache.SoundPlayer.resume();
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     @Override

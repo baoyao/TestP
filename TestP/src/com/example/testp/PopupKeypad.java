@@ -23,6 +23,7 @@ public class PopupKeypad {
     private String[] dataList;
     private Button mTagView;
     private PopupWindow mKeyPopupWindow;
+    private EditItemView mItemView;
 
     public PopupKeypad(Context context) {
         this.mContext = context;
@@ -37,13 +38,15 @@ public class PopupKeypad {
 
     public void showSoundKeypad(View view) {
         mTagView = (Button) view;
+        mItemView = null;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
     }
 
-    public void showTimeKeypad(View view) {
+    public void showTimeKeypad(EditItemView itemView,View view) {
         mTagView = (Button) view;
+        mItemView = itemView;
         dataList = mContext.getResources().getStringArray(R.array.times);
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
@@ -56,6 +59,12 @@ public class PopupKeypad {
             mTagView.setText(dataList[position]);
             mTagView.setTag(""+position);
             mKeyPopupWindow.dismiss();
+            if(mItemView!=null){
+                if(PublicCache.TimeController!=null
+                        &&PublicCache.TimeController.getOnTimeChangedListener()!=null){
+                    PublicCache.TimeController.getOnTimeChangedListener().onChanged(mItemView);
+                }
+            }
         }
     };
 

@@ -24,6 +24,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
 
     private TextView mIndexView;
     private PopupKeypad mKeypad;
+    private String[] mTimeList;
 
     public EditItemView(Context context) {
         this(context, null, 0);
@@ -39,6 +40,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
         super(context, attrs, defStyle);
         // TODO Auto-generated constructor stub
         this.mContext = context;
+        mTimeList = mContext.getResources().getStringArray(R.array.times);
     }
 
     public void setIndex(int index) {
@@ -49,16 +51,25 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     public int getIndex() {
         return mIndex;
     }
-    
-    public int getSoundIndex(){
-       return mSound.getTag()==null?0:Integer.parseInt(mSound.getTag().toString());
+
+    public int getSoundIndex() {
+        return mSound.getTag() == null ? 0 : Integer.parseInt(mSound.getTag().toString());
+    }
+
+    public int[] getTime() {
+        int t1 = mTime1.getTag() == null ? 0 : Integer.parseInt(mTime1.getTag().toString());
+        int t2 = mTime2.getTag() == null ? 0 : Integer.parseInt(mTime2.getTag().toString());
+        int t3 = mTime3.getTag() == null ? 0 : Integer.parseInt(mTime3.getTag().toString());
+        return new int[] { t1, t2, t3 };
     }
     
-    public int[] getTime(){
-        int t1=mTime1.getTag()==null?0:Integer.parseInt(mTime1.getTag().toString());
-        int t2=mTime2.getTag()==null?0:Integer.parseInt(mTime2.getTag().toString());
-        int t3=mTime3.getTag()==null?0:Integer.parseInt(mTime3.getTag().toString());
-        return new int[]{t1,t2,t3};
+    public void setTime(int[] time){
+        mTime1.setText(mTimeList[time[0]]);
+        mTime2.setText(mTimeList[time[1]]);
+        mTime3.setText(mTimeList[time[2]]);
+        mTime1.setTag(""+time[0]);
+        mTime2.setTag(""+time[1]);
+        mTime3.setTag(""+time[2]);
     }
 
     @Override
@@ -72,12 +83,12 @@ public class EditItemView extends LinearLayout implements OnClickListener {
         mAdd.setOnClickListener(this);
 
         mIndexView = (TextView) this.findViewById(R.id.index);
-        
+
         mKeypad = new PopupKeypad(mContext);
-        
+
         mSound = (Button) this.findViewById(R.id.sound);
         mSound.setOnClickListener(this);
-        
+
         mTime1 = (Button) this.findViewById(R.id.time1);
         mTime2 = (Button) this.findViewById(R.id.time2);
         mTime3 = (Button) this.findViewById(R.id.time3);
@@ -97,20 +108,20 @@ public class EditItemView extends LinearLayout implements OnClickListener {
             break;
         case R.id.add:
             if (mOnAddListener != null) {
-                mOnAddListener.onClick(getIndex(),this);
+                mOnAddListener.onClick(getIndex(), this);
             }
             break;
         case R.id.sound:
             mKeypad.showSoundKeypad(mSound);
             break;
         case R.id.time1:
-            mKeypad.showTimeKeypad(mTime1);
+            mKeypad.showTimeKeypad(this,mTime1);
             break;
         case R.id.time2:
-            mKeypad.showTimeKeypad(mTime2);
+            mKeypad.showTimeKeypad(this,mTime2);
             break;
         case R.id.time3:
-            mKeypad.showTimeKeypad(mTime3);
+            mKeypad.showTimeKeypad(this,mTime3);
             break;
         default:
             break;
