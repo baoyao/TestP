@@ -2,6 +2,8 @@ package com.example.testp;
 
 import java.io.IOException;
 
+import com.example.testp.KeyButton.OnTouchDownListener;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -16,7 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnTouchDownListener {
 
     private final static int START_LOAD_INDEX = 0;
     private final static int MAX_SOUNDS = 88;
@@ -124,12 +126,12 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private View buildBlackKey(int keyIndex, int soundId) {
-        Button view = new Button(this);
+        KeyButton view = new KeyButton(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(BLACK_KEY_WIDTH,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(calcBlackKeyLeftMargin(keyIndex), 0, 0, 0);
         view.setLayoutParams(params);
-        view.setOnClickListener(this);
+        view.setOnTouchDownListener(this);
         view.setTag(soundId);
         view.setBackgroundResource(R.drawable.black_key_selector);
         return view;
@@ -169,12 +171,12 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private View buildWhiteKey(int keyIndex, int soundId) {
-        Button view = new Button(this);
+        KeyButton view = new KeyButton(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WHITE_KEY_WIDTH,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(WHITE_KEY_LEFT_MARGIN, 0, 0, 5);
         view.setLayoutParams(params);
-        view.setOnClickListener(this);
+        view.setOnTouchDownListener(this);
         view.setTag(soundId);
         view.setBackgroundResource(R.drawable.white_key_selector);
         return view;
@@ -232,7 +234,7 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onTouchDown(View v) {
         int sId = (Integer) v.getTag();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
     }
@@ -259,6 +261,15 @@ public class MainActivity extends Activity implements OnClickListener {
             break;
         default:
             break;
+        }
+    }
+    
+    public void onMoreButtonClick(View view){
+        View controllerView=this.findViewById(R.id.controller_layout);
+        if(controllerView.getVisibility()==View.INVISIBLE){
+            controllerView.setVisibility(View.VISIBLE);
+        }else{
+            controllerView.setVisibility(View.INVISIBLE);
         }
     }
 

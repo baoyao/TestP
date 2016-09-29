@@ -1,20 +1,73 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ground"
-    android:orientation="vertical" >
+    android:background="@drawable/ground" >
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/rhythm_anim_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="#000000"
+                android:orientation="horizontal" >
+
+                <FrameLayout
+                    android:id="@+id/key_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" >
+
+                    <LinearLayout
+                        android:id="@+id/white_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/black_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="80dp"
+                        android:orientation="horizontal" />
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#33ffffff"
+        android:gravity="center"
+        android:onClick="onMoreButtonClick"
+        android:text=" . . . " />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:orientation="horizontal" >
+        android:id="@+id/controller_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="invisible" >
 
         <Button
             android:id="@+id/jump_to_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
             android:onClick="onControlButtonClick"
             android:text="Edit song" />
 
@@ -43,29 +96,4 @@
             android:text="Resume" />
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:background="#000000" >
-
-        <FrameLayout
-            android:id="@+id/key_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" >
-
-            <LinearLayout
-                android:id="@+id/white_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal" />
-
-            <LinearLayout
-                android:id="@+id/black_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:orientation="horizontal" />
-        </FrameLayout>
-    </HorizontalScrollView>
-
-</LinearLayout>
+</FrameLayout>
