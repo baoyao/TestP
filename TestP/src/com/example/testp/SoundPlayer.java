@@ -71,9 +71,6 @@ public class SoundPlayer {
                         playIndex++;
                         Log.v("tt", "play...");
                     }
-                    sleepTime = 10;
-                } else {
-                    sleepTime = 500;
                 }
                 try {
                     Thread.sleep(sleepTime);

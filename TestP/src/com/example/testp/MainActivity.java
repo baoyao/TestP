@@ -2,8 +2,6 @@ package com.example.testp;
 
 import java.io.IOException;
 
-import com.example.testp.KeyButton.OnTouchDownListener;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,14 +12,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.example.testp.KeyButton.OnTouchDownListener;
 
 public class MainActivity extends Activity implements OnTouchDownListener {
 
     private final static int START_LOAD_INDEX = 0;
-    private final static int MAX_SOUNDS = 88;
+    private final static int MAX_SOUNDS = PublicConfig.MAX_SOUNDS;
 
     private SoundPool mSoundPool;
     private int[] mSoundId;
@@ -96,7 +94,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             protected void onPostExecute(Integer soundsLength) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(soundsLength);
-                dismissDialog();
+                RhythmController controller=new RhythmController(MainActivity.this);
+                controller.startPlayAnim();
                 PublicCache.SoundPlayer = new SoundPlayer(mSoundPool);
                 mWhiteLayout.removeAllViews();
                 mBlackLayout.removeAllViews();
@@ -113,6 +112,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                         break;
                     }
                 }
+                dismissDialog();
             }
 
             @Override
@@ -137,9 +137,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         return view;
     }
 
-    private final int BLACK_KEY_WIDTH = 2 * 40;
-    private final int WHITE_KEY_WIDTH = 2 * 60;
-    private final int WHITE_KEY_LEFT_MARGIN = 1;
+    private final int BLACK_KEY_WIDTH = PublicConfig.BLACK_KEY_WIDTH;
+    private final int WHITE_KEY_WIDTH = PublicConfig.WHITE_KEY_WIDTH;
+    private final int WHITE_KEY_LEFT_MARGIN = PublicConfig.WHITE_KEY_LEFT_MARGIN;
 
     private final int KEY_START_INDEX = 2;
     private final int TOTAL_CELL_KEYS = 12;
@@ -177,7 +177,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         params.setMargins(WHITE_KEY_LEFT_MARGIN, 0, 0, 5);
         view.setLayoutParams(params);
         view.setOnTouchDownListener(this);
-        view.setTag(soundId);
+        view.setSoundId(soundId);
         view.setBackgroundResource(R.drawable.white_key_selector);
         return view;
     }
@@ -235,7 +235,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
 
     @Override
     public void onTouchDown(View v) {
-        int sId = (Integer) v.getTag();
+        int sId = ((KeyButton) v).getSoundId();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
     }
 
