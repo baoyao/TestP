@@ -5,14 +5,15 @@ package com.example.testp;
  */
 public class PublicConfig {
     
-    public final static int MAX_SOUNDS = 5;
+    public final static int MAX_SOUNDS = 88;
     
     public static final int BLACK_KEY_WIDTH = 2 * 40;
     public static final int WHITE_KEY_WIDTH = 2 * 60;
     public static final int WHITE_KEY_LEFT_MARGIN = 1;
 
     public static final int RHYTHM_VIEW_HEIGTH=20;//音符控件高度
-    public static final int RHYTHM_VIEW_ANIM_SPEED=20;//音符控件掉下的速度
-    public static final int RHYTHM_VIEW_END_LINE=500;//音符控件掉下的最低位置
+    public static final int RHYTHM_VIEW_WIDTH=WHITE_KEY_WIDTH-BLACK_KEY_WIDTH;//音符控件高度
+    public static final int RHYTHM_VIEW_ANIM_SPEED=2;//音符控件掉下的速度
+    public static final int RHYTHM_VIEW_END_LINE=440;//音符控件掉下的最低位置
 
 }

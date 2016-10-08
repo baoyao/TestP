@@ -3,6 +3,7 @@ package com.example.testp;
 import java.util.List;
 
 import android.media.SoundPool;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,10 +18,13 @@ public class SoundPlayer {
     private Gson mGson;
     private SoundPool mSoundPool;
     private PlayThread mPlayThread;
+    
+    private Handler mHandler;
 
-    public SoundPlayer(SoundPool soundPool) {
+    public SoundPlayer(Handler handler) {
+        mHandler=handler;
         mGson = new Gson();
-        mSoundPool = soundPool;
+        mSoundPool = PublicCache.SoundPool;
     }
 
     public void play(String json) {
@@ -67,7 +71,8 @@ public class SoundPlayer {
                     boolean timeToPlay = currentTime >= calcMillis(resultList.get(playIndex).getTime());
                     if (timeToPlay) {
                         int sId = resultList.get(playIndex).getSound();
-                        mSoundPool.play(sId, 1, 1, 0, 0, 1);
+//                        mSoundPool.play(sId, 1, 1, 0, 0, 1);
+                        mHandler.sendEmptyMessage(sId);
                         playIndex++;
                         Log.v("tt", "play...");
                     }

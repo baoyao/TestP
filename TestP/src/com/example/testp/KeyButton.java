@@ -16,9 +16,10 @@ import android.widget.LinearLayout;
  */
 public class KeyButton extends Button {
     
+    private int keyId;
+    
     private int soundId;
     
-    private ImageView rhythmView;
 
     public KeyButton(Context context) {
         this(context, null, 0);
@@ -32,34 +33,14 @@ public class KeyButton extends Button {
 
     public KeyButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        // TODO Auto-generated constructor stub
-        buildRhythmView(context);
     }
     
-    private void buildRhythmView(Context context){
-        rhythmView=new ImageView(context);
-        rhythmView.setBackgroundResource(R.drawable.white_note_hd);
+    public int getKeyId() {
+        return keyId;
     }
 
-    @Override
-    public void setLayoutParams(LayoutParams params) {
-        super.setLayoutParams(params);
-        LinearLayout.LayoutParams parentParams=((LinearLayout.LayoutParams)params);
-
-        LinearLayout.LayoutParams subParams = new LinearLayout.LayoutParams(parentParams.width,
-                PublicConfig.RHYTHM_VIEW_HEIGTH);
-        subParams.setMargins(parentParams.leftMargin, 0, 0, 0);
-        rhythmView.setLayoutParams(subParams);
-    }
-    
-    public void setRhythmViewTopMargins(int topMargin){
-        LinearLayout.LayoutParams params=(android.widget.LinearLayout.LayoutParams) rhythmView.getLayoutParams();
-        params.setMargins(topMargin, params.topMargin, params.rightMargin, params.bottomMargin);
-        rhythmView.setLayoutParams(params);
-    }
-
-    public ImageView getRhythmView() {
-        return rhythmView;
+    public void setKeyId(int keyId) {
+        this.keyId = keyId;
     }
 
     public int getSoundId() {
@@ -68,6 +49,16 @@ public class KeyButton extends Button {
 
     public void setSoundId(int soundId) {
         this.soundId = soundId;
+    }
+    
+    private int rhythmViewLeftMargin;
+    
+    public int getRhythmViewLeftMargin() {
+        return rhythmViewLeftMargin;
+    }
+
+    public void setRhythmViewLeftMargin(int rhythmViewLeftMargin) {
+        this.rhythmViewLeftMargin = rhythmViewLeftMargin;
     }
 
     @Override

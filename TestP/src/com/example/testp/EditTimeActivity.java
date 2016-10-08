@@ -143,6 +143,7 @@ public class EditTimeActivity extends Activity {
         PublicCache.SongJson=soundJson;
         if (PublicCache.SoundPlayer != null) {
             PublicCache.SoundPlayer.play(PublicCache.SongJson);
+            this.finish();
         }
     }
 

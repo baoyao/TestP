@@ -1,6 +1,8 @@
 package com.example.testp;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,6 +12,8 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -94,24 +98,36 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             protected void onPostExecute(Integer soundsLength) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(soundsLength);
-                RhythmController controller=new RhythmController(MainActivity.this);
-                controller.startPlayAnim();
-                PublicCache.SoundPlayer = new SoundPlayer(mSoundPool);
+                PublicCache.SoundPool = mSoundPool;
                 mWhiteLayout.removeAllViews();
                 mBlackLayout.removeAllViews();
-
+                PublicCache.keyButtonList.clear();
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < soundsLength; i++) {
                     count++;
+                    KeyButton keyButton=null;
                     if (isBlackKey(count)) {
-                        mBlackLayout.addView(buildBlackKey(count, (i + 1)));
+                        keyButton=buildBlackKey(count, (i + 1));
+                        mBlackLayout.addView(keyButton);
                     } else {
-                        mWhiteLayout.addView(buildWhiteKey(count, (i + 1)));
+                        keyButton=buildWhiteKey(count, (i + 1));
+                        mWhiteLayout.addView(keyButton);
                     }
+                    PublicCache.keyButtonList.add(keyButton);
                     if (count >= MAX_SOUNDS) {
                         break;
                     }
                 }
+                PublicCache.RhythmController=new RhythmController(MainActivity.this);
+                
+                PublicCache.SoundPlayer = new SoundPlayer(new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        PublicCache.RhythmController.addRhythViewToLayout(msg.what);
+                    }
+                });
+                
+                
                 dismissDialog();
             }
 
@@ -125,14 +141,15 @@ public class MainActivity extends Activity implements OnTouchDownListener {
 
     }
 
-    private View buildBlackKey(int keyIndex, int soundId) {
+    private KeyButton buildBlackKey(int keyIndex, int soundId) {
         KeyButton view = new KeyButton(this);
+        view.setKeyId(keyIndex);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(BLACK_KEY_WIDTH,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(calcBlackKeyLeftMargin(keyIndex), 0, 0, 0);
         view.setLayoutParams(params);
         view.setOnTouchDownListener(this);
-        view.setTag(soundId);
+        view.setSoundId(soundId);
         view.setBackgroundResource(R.drawable.black_key_selector);
         return view;
     }
@@ -146,7 +163,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
 
     private int calcBlackKeyLeftMargin(int id) {
         int marginLeft = 0;
-        switch (getEndResult(id - 3)) {
+        switch (getEndKeyNum(id - 3)) {
         case KEY_START_INDEX - 3:// 第一个黑键
             marginLeft = (WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2)) + (WHITE_KEY_LEFT_MARGIN * 2);
             break;
@@ -170,8 +187,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         return marginLeft;
     }
 
-    private View buildWhiteKey(int keyIndex, int soundId) {
+    private KeyButton buildWhiteKey(int keyIndex, int soundId) {
         KeyButton view = new KeyButton(this);
+        view.setKeyId(keyIndex);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WHITE_KEY_WIDTH,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         params.setMargins(WHITE_KEY_LEFT_MARGIN, 0, 0, 5);
@@ -187,17 +205,17 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             return count == KEY_START_INDEX || count == KEY_START_INDEX + 3 || count == KEY_START_INDEX + 5
                     || count == KEY_START_INDEX + 8 || count == KEY_START_INDEX + 10 || count == KEY_START_INDEX + 12;
         } else {
-            int endResult = getEndResult(count - 3);
+            int endResult = getEndKeyNum(count - 3);
             return endResult == KEY_START_INDEX || endResult == KEY_START_INDEX + 2 || endResult == KEY_START_INDEX + 5
                     || endResult == KEY_START_INDEX + 7 || endResult == KEY_START_INDEX + 9;
         }
     }
 
-    private int getEndResult(int count) {
+    private int getEndKeyNum(int count) {
         if (count <= TOTAL_CELL_KEYS) {
             return count;
         }
-        return getEndResult(count - TOTAL_CELL_KEYS);
+        return getEndKeyNum(count - TOTAL_CELL_KEYS);
     }
 
     private ProgressDialog mDialog;
@@ -252,11 +270,13 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         case R.id.pause:
             if(PublicCache.SoundPlayer!=null){
                 PublicCache.SoundPlayer.pause();
+                PublicCache.RhythmController.pause();
             }
             break;
         case R.id.resume:
             if(PublicCache.SoundPlayer!=null){
                 PublicCache.SoundPlayer.resume();
+                PublicCache.RhythmController.resume();
             }
             break;
         default:
