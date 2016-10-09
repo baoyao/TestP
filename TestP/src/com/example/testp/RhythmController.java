@@ -1,7 +1,10 @@
 package com.example.testp;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -16,9 +19,13 @@ public class RhythmController {
 
     private Context mContext;
     private FrameLayout mRhythmLayout;
+    private List<KeyButton> mKeyButtonList;
+    private SoundPool mSoundPool;
 
-    public RhythmController(Context context) {
+    public RhythmController(Context context, SoundPool soundPool, List<KeyButton> keyButtonList) {
         mContext = context;
+        mKeyButtonList=keyButtonList;
+        mSoundPool=soundPool;
         mRhythmLayout = (FrameLayout) ((Activity) context).findViewById(R.id.rhythm_anim_layout);
         crrentLeftMargin = 0;
         mRhythmLayout.removeAllViews();
@@ -29,7 +36,7 @@ public class RhythmController {
     private int crrentLeftMargin = 0;
 
     private void buildRhythmItem() {
-        for (int i = 0; i < PublicCache.keyButtonList.size(); i++) {
+        for (int i = 0; i < mKeyButtonList.size(); i++) {
             int leftMargin = 0;
             if (i < 3) {
                 if (i == 0) {
@@ -82,7 +89,7 @@ public class RhythmController {
                     break;
                 }
             }
-            PublicCache.keyButtonList.get(i).setRhythmViewLeftMargin(crrentLeftMargin + leftMargin);
+            mKeyButtonList.get(i).setRhythmViewLeftMargin(crrentLeftMargin + leftMargin);
 //            mRhythmLayout.addView(buildRhythmView(PublicCache.keyButtonList.get(i).getSoundId()));
             crrentLeftMargin += leftMargin + 40;
         }
@@ -100,7 +107,7 @@ public class RhythmController {
         rhythmView.setBackgroundResource(R.drawable.white_note_hd);
         FrameLayout.LayoutParams subParams = new FrameLayout.LayoutParams(PublicConfig.RHYTHM_VIEW_WIDTH,
                 PublicConfig.RHYTHM_VIEW_HEIGTH);
-        int leftMargin=PublicCache.keyButtonList.get(soundId-1).getRhythmViewLeftMargin();
+        int leftMargin=mKeyButtonList.get(soundId-1).getRhythmViewLeftMargin();
         subParams.setMargins(leftMargin, 0, 0, 0);
         rhythmView.setLayoutParams(subParams);
         rhythmView.setTag(soundId+"");
@@ -177,7 +184,7 @@ public class RhythmController {
                 if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
                     mRhythmLayout.removeViewAt(i);
                     int soundId=Integer.parseInt(rhythmView.getTag().toString());
-                    PublicCache.SoundPool.play(soundId, 1, 1, 0, 0, 1);
+                    mSoundPool.play(soundId, 1, 1, 0, 0, 1);
                 }
             }
             if(mRhythmLayout.getChildCount()==0){

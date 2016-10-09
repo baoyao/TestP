@@ -26,6 +26,12 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private final static int MAX_SOUNDS = PublicConfig.MAX_SOUNDS;
 
     private SoundPool mSoundPool;
+    private SoundPlayer mSoundPlayer;
+    
+    private RhythmController mRhythmController;
+    
+    private String mSongJson;
+    
     private int[] mSoundId;
 
     @Override
@@ -98,10 +104,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             protected void onPostExecute(Integer soundsLength) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(soundsLength);
-                PublicCache.SoundPool = mSoundPool;
                 mWhiteLayout.removeAllViews();
                 mBlackLayout.removeAllViews();
-                PublicCache.keyButtonList.clear();
+                List<KeyButton> keyButtonList=new ArrayList<KeyButton>();
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < soundsLength; i++) {
                     count++;
@@ -113,21 +118,18 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                         keyButton=buildWhiteKey(count, (i + 1));
                         mWhiteLayout.addView(keyButton);
                     }
-                    PublicCache.keyButtonList.add(keyButton);
+                    keyButtonList.add(keyButton);
                     if (count >= MAX_SOUNDS) {
                         break;
                     }
                 }
-                PublicCache.RhythmController=new RhythmController(MainActivity.this);
-                
-                PublicCache.SoundPlayer = new SoundPlayer(new Handler(){
+                mRhythmController=new RhythmController(MainActivity.this,mSoundPool,keyButtonList);
+                mSoundPlayer = new SoundPlayer(new Handler(){
                     @Override
                     public void handleMessage(Message msg) {
-                        PublicCache.RhythmController.addRhythViewToLayout(msg.what);
+                        mRhythmController.addRhythViewToLayout(msg.what);
                     }
                 });
-                
-                
                 dismissDialog();
             }
 
@@ -138,9 +140,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 setDialogProgress(values[0]);
             }
         }.execute(null, null);
-
     }
-
+    
     private KeyButton buildBlackKey(int keyIndex, int soundId) {
         KeyButton view = new KeyButton(this);
         view.setKeyId(keyIndex);
@@ -256,28 +257,43 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         int sId = ((KeyButton) v).getSoundId();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            mSongJson=data.getStringExtra(Constants.EXT_SOUND_DATA);
+            Log.v("tt","onResume mSongJson: "+mSongJson);
+            if(mSongJson!=null){
+                mSoundPlayer.play(mSongJson);
+            }
+        }
+    }
 
     public void onControlButtonClick(View view) {
         switch (view.getId()) {
         case R.id.jump_to_edit:
-            startActivity(new Intent(MainActivity.this, EditTimeActivity.class));
+            startActivityForResult(new Intent(MainActivity.this, EditTimeActivity.class), 0);
             break;
         case R.id.play:
-            if(PublicCache.SoundPlayer!=null){
-                PublicCache.SoundPlayer.play(PublicCache.SongJson);
+            if(mSoundPlayer!=null && mSongJson!=null){
+                mSoundPlayer.play(mSongJson);
             }
             break;
         case R.id.pause:
-            if(PublicCache.SoundPlayer!=null){
-                PublicCache.SoundPlayer.pause();
-                PublicCache.RhythmController.pause();
+            if(mSoundPlayer!=null){
+                mSoundPlayer.pause();
+                mRhythmController.pause();
             }
             break;
         case R.id.resume:
-            if(PublicCache.SoundPlayer!=null){
-                PublicCache.SoundPlayer.resume();
-                PublicCache.RhythmController.resume();
+            if(mSoundPlayer!=null){
+                mSoundPlayer.resume();
+                mRhythmController.resume();
             }
+            break;
+        case R.id.songlist:
+            startActivityForResult(new Intent(MainActivity.this, SongListActivity.class), 1);
             break;
         default:
             break;

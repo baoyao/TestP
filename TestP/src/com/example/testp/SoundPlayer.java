@@ -2,10 +2,8 @@ package com.example.testp;
 
 import java.util.List;
 
-import android.media.SoundPool;
 import android.os.Handler;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -16,7 +14,6 @@ import com.google.gson.reflect.TypeToken;
 public class SoundPlayer {
 
     private Gson mGson;
-    private SoundPool mSoundPool;
     private PlayThread mPlayThread;
     
     private Handler mHandler;
@@ -24,7 +21,6 @@ public class SoundPlayer {
     public SoundPlayer(Handler handler) {
         mHandler=handler;
         mGson = new Gson();
-        mSoundPool = PublicCache.SoundPool;
     }
 
     public void play(String json) {

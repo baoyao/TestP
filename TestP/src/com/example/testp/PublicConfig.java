@@ -1,11 +1,16 @@
 package com.example.testp;
+
+import android.os.Environment;
+
 /**
  * @author houen.bao
  * @date Sep 30, 2016 10:44:23 AM
  */
 public class PublicConfig {
+
+    public static final String SONG_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+"/songs";
     
-    public final static int MAX_SOUNDS = 88;
+    public final static int MAX_SOUNDS = 5;
     
     public static final int BLACK_KEY_WIDTH = 2 * 40;
     public static final int WHITE_KEY_WIDTH = 2 * 60;

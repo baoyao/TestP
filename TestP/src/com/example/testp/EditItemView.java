@@ -25,6 +25,8 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     private TextView mIndexView;
     private PopupKeypad mKeypad;
     private String[] mTimeList;
+    
+    private OnTimeChangedListener mOnTimeChangedListener;
 
     public EditItemView(Context context) {
         this(context, null, 0);
@@ -41,6 +43,10 @@ public class EditItemView extends LinearLayout implements OnClickListener {
         // TODO Auto-generated constructor stub
         this.mContext = context;
         mTimeList = mContext.getResources().getStringArray(R.array.times);
+    }
+
+    public void setOnTimeChangedListener(OnTimeChangedListener onTimeChangedListener){
+        mOnTimeChangedListener=onTimeChangedListener;
     }
 
     public void setIndex(int index) {
@@ -115,13 +121,13 @@ public class EditItemView extends LinearLayout implements OnClickListener {
             mKeypad.showSoundKeypad(mSound);
             break;
         case R.id.time1:
-            mKeypad.showTimeKeypad(this,mTime1);
+            mKeypad.showTimeKeypad(this,mTime1,mOnTimeChangedListener);
             break;
         case R.id.time2:
-            mKeypad.showTimeKeypad(this,mTime2);
+            mKeypad.showTimeKeypad(this,mTime2,mOnTimeChangedListener);
             break;
         case R.id.time3:
-            mKeypad.showTimeKeypad(this,mTime3);
+            mKeypad.showTimeKeypad(this,mTime3,mOnTimeChangedListener);
             break;
         default:
             break;
@@ -142,6 +148,10 @@ public class EditItemView extends LinearLayout implements OnClickListener {
 
     public interface OnAddListener {
         public void onClick(int index, View v);
+    }
+    
+    public interface OnTimeChangedListener {
+        public void onChanged(EditItemView itemView);
     }
 
 }

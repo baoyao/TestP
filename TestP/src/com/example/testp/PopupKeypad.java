@@ -1,5 +1,7 @@
 package com.example.testp;
 
+import com.example.testp.EditItemView.OnTimeChangedListener;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +25,7 @@ public class PopupKeypad {
     private String[] dataList;
     private Button mTagView;
     private PopupWindow mKeyPopupWindow;
-    private EditItemView mItemView;
+    private EditItemView mTimeView;
 
     public PopupKeypad(Context context) {
         this.mContext = context;
@@ -38,19 +40,22 @@ public class PopupKeypad {
 
     public void showSoundKeypad(View view) {
         mTagView = (Button) view;
-        mItemView = null;
+        mTimeView = null;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
     }
 
-    public void showTimeKeypad(EditItemView itemView,View view) {
+    public void showTimeKeypad(EditItemView timeView,View view, OnTimeChangedListener onTimeChangedListener) {
         mTagView = (Button) view;
-        mItemView = itemView;
+        mTimeView = timeView;
+        mOnTimeChangedListener=onTimeChangedListener;
         dataList = mContext.getResources().getStringArray(R.array.times);
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
     }
+    
+    private OnTimeChangedListener mOnTimeChangedListener;
 
     private OnItemClickListener mKeypadOnItemClickListener = new OnItemClickListener() {
         @Override
@@ -59,11 +64,8 @@ public class PopupKeypad {
             mTagView.setText(dataList[position]);
             mTagView.setTag(""+position);
             mKeyPopupWindow.dismiss();
-            if(mItemView!=null){
-                if(PublicCache.TimeController!=null
-                        &&PublicCache.TimeController.getOnTimeChangedListener()!=null){
-                    PublicCache.TimeController.getOnTimeChangedListener().onChanged(mItemView);
-                }
+            if(mTimeView!=null&&mOnTimeChangedListener!=null){
+                mOnTimeChangedListener.onChanged(mTimeView);
             }
         }
     };
