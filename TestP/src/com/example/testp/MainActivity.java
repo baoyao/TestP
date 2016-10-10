@@ -273,7 +273,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     public void onControlButtonClick(View view) {
         switch (view.getId()) {
         case R.id.jump_to_edit:
-            startActivityForResult(new Intent(MainActivity.this, EditTimeActivity.class), 0);
+            Intent intent=new Intent(MainActivity.this, EditTimeActivity.class);
+            intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.MAIN_ACTIVITY_REQUEST_CODE);
+            startActivityForResult(intent, Constants.MAIN_ACTIVITY_REQUEST_CODE);
             break;
         case R.id.play:
             if(mSoundPlayer!=null && mSongJson!=null){
@@ -293,7 +295,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             }
             break;
         case R.id.songlist:
-            startActivityForResult(new Intent(MainActivity.this, SongListActivity.class), 1);
+            startActivityForResult(new Intent(MainActivity.this, SongListActivity.class), Constants.MAIN_ACTIVITY_REQUEST_CODE);
             break;
         default:
             break;

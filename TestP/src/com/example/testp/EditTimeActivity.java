@@ -20,8 +20,6 @@ import android.widget.Toast;
 import com.example.testp.EditItemView.OnAddListener;
 import com.example.testp.EditItemView.OnDeleteListener;
 import com.example.testp.EditItemView.OnTimeChangedListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * @author houen.bao
@@ -31,15 +29,31 @@ public class EditTimeActivity extends Activity {
 
     private LinearLayout mItemsLayout;
     private EditText songNameEditText;
+    private int mRequestCode=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
-
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
         songNameEditText=(EditText) this.findViewById(R.id.song_name);
+        
+        Intent intent=this.getIntent();
+        mRequestCode=intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
+        String soundData=intent.getStringExtra(Constants.EXT_SOUND_DATA);
+        if(soundData!=null){
+            String soundName=intent.getStringExtra(Constants.EXT_SONG_NAME);
+            songNameEditText.setText(soundName);
+            List<SoundInfo> soundList=Utils.jsonParseToSoundObject(soundData);
+            for(int i=0;i<soundList.size();i++){
+                SoundInfo info=soundList.get(i);
+                EditItemView item=createEditView(info.getIndex());
+                item.setTime(info.getTime());
+                item.setSound(info.getSound());
+                mItemsLayout.addView(item,mItemsLayout.getChildCount()-1);
+            }
+        }
     }
 
     private long calcMillis(int[] time) {
@@ -133,7 +147,6 @@ public class EditTimeActivity extends Activity {
             return;
         }
         
-        Gson gson = new Gson();
         List<SoundInfo> list = new ArrayList<SoundInfo>();
         for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
             if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
@@ -149,8 +162,7 @@ public class EditTimeActivity extends Activity {
             }
         }
 
-        String soundJson = gson.toJson(list, new TypeToken<List<SoundInfo>>() {
-        }.getType());
+        String soundJson = Utils.soundObjectParseToJson(list);
 
         makeNewFile(songName);
         File file=new File(SONG_PATH+"/"+songName+".txt");
@@ -159,7 +171,11 @@ public class EditTimeActivity extends Activity {
         
         Intent intent=new Intent();
         intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
-        intent.setClass(this, MainActivity.class);
+        if(mRequestCode==Constants.SONG_LIST_ACTIVITY_REQUEST_CODE){
+            intent.setClass(this, SongListActivity.class);
+        }else{
+            intent.setClass(this, MainActivity.class);
+        }
         this.setResult(RESULT_OK, intent);
         this.finish();
     }

@@ -6,5 +6,11 @@ package com.example.testp;
 public class Constants {
 
     public static final String EXT_SOUND_DATA="sound_data";
+    public static final String EXT_SONG_NAME="song_name";
+    public static final String EXT_REQUEST_CODE="request_code";
+
+    public static final int MAIN_ACTIVITY_REQUEST_CODE=1;
+    public static final int SONG_LIST_ACTIVITY_REQUEST_CODE=2;
+    
 
 }

@@ -4,8 +4,6 @@ import java.util.List;
 
 import android.os.Handler;
 import android.util.Log;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * @author houen.bao
@@ -13,14 +11,12 @@ import com.google.gson.reflect.TypeToken;
  */
 public class SoundPlayer {
 
-    private Gson mGson;
     private PlayThread mPlayThread;
     
     private Handler mHandler;
 
     public SoundPlayer(Handler handler) {
         mHandler=handler;
-        mGson = new Gson();
     }
 
     public void play(String json) {
@@ -51,8 +47,7 @@ public class SoundPlayer {
         List<SoundInfo> resultList;
 
         public PlayThread(String json) {
-            resultList = mGson.fromJson(json, new TypeToken<List<SoundInfo>>() {
-            }.getType());
+            resultList = Utils.jsonParseToSoundObject(json);
         }
 
         @Override

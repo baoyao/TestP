@@ -22,9 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 /**
  * @author houen.bao
  * @date Oct 9, 2016 10:56:42 AM
@@ -34,14 +31,12 @@ public class SongListActivity extends Activity {
     private final String SONG_PATH=PublicConfig.SONG_PATH;
     private List<List<SoundInfo>> mSoundList=new ArrayList<List<SoundInfo>>();
     private String[] songs;
-    private Gson mGson;
     private SongAdapter mSongAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.song_list);
-        mGson=new Gson();
         File file=new File(SONG_PATH);
         if(!file.exists()){
             file.mkdirs();
@@ -60,8 +55,7 @@ public class SongListActivity extends Activity {
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String soundJson=mGson.toJson(mSoundList.get(position), new TypeToken<List<SoundInfo>>() {
-                }.getType());
+                String soundJson=Utils.soundObjectParseToJson(mSoundList.get(position));
                 Intent intent=new Intent();
                 intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
                 intent.setClass(SongListActivity.this, MainActivity.class);
@@ -69,6 +63,22 @@ public class SongListActivity extends Activity {
                 SongListActivity.this.finish();
             }
         });
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            String soundJson=data.getStringExtra(Constants.EXT_SOUND_DATA);
+            if(soundJson!=null){
+                reload();
+//                Intent intent=new Intent();
+//                intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
+//                intent.setClass(SongListActivity.this, MainActivity.class);
+//                SongListActivity.this.setResult(RESULT_OK, intent);
+//                SongListActivity.this.finish();
+            }
+        }
     }
     
     @Override
@@ -129,6 +139,7 @@ public class SongListActivity extends Activity {
                 holder.name=(TextView) convertView.findViewById(R.id.name);
                 holder.count=(TextView) convertView.findViewById(R.id.count);
                 holder.delete=(Button) convertView.findViewById(R.id.delete);
+                holder.edit=(Button) convertView.findViewById(R.id.edit);
                 holder.delete.setOnClickListener(new OnClickListener(){
                     @Override
                     public void onClick(View v) {
@@ -136,6 +147,16 @@ public class SongListActivity extends Activity {
                         file.delete();
                         Toast.makeText(SongListActivity.this, "Delete "+songs[position]+" success", Toast.LENGTH_SHORT).show();
                         reload();
+                    }
+                });
+                holder.edit.setOnClickListener(new OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(SongListActivity.this, EditTimeActivity.class);
+                        intent.putExtra(Constants.EXT_SOUND_DATA, Utils.soundObjectParseToJson(mSoundList.get(position)));
+                        intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
+                        intent.putExtra(Constants.EXT_SONG_NAME, songs[position].substring(0, songs[position].indexOf(".")));
+                        startActivityForResult(intent,Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
                     }
                 });
                 convertView.setTag(holder);
@@ -149,7 +170,7 @@ public class SongListActivity extends Activity {
         
         class Holder{
             TextView name,count;
-            Button delete;
+            Button delete,edit;
         }
         
     }
@@ -158,7 +179,7 @@ public class SongListActivity extends Activity {
         for(int i=0;i<filelist.length;i++){
             File file=new File(SONG_PATH+"/"+filelist[i]);
             String fileContent=readTxtFile(file);
-            List<SoundInfo> list=mGson.fromJson(fileContent,new TypeToken<List<SoundInfo>>(){}.getType());
+            List<SoundInfo> list=Utils.jsonParseToSoundObject(fileContent);
             mSoundList.add(list);
         }
     }
