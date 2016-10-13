@@ -127,7 +127,19 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 mSoundPlayer = new SoundPlayer(new Handler(){
                     @Override
                     public void handleMessage(Message msg) {
-                        mRhythmController.addRhythViewToLayout(msg.what);
+                        switch(msg.what){
+                        case Constants.MSG_PREPARE_PLAY:
+                            mRhythmController.startPlayAnim();
+                            break;
+                        case Constants.MSG_PLAY_BY_SOUND_ID:
+                            mRhythmController.addRhythViewToLayout(msg.arg1);
+                            break;
+                        case Constants.MSG_STOP_PLAY:
+                            mRhythmController.needStopAnim();
+                            break;
+                        default:
+                            break;
+                        }
                     }
                 });
                 dismissDialog();

@@ -10,7 +10,7 @@ public class PublicConfig {
 
     public static final String SONG_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+"/songs";
     
-    public final static int MAX_SOUNDS = 88;
+    public final static int MAX_SOUNDS = 5;
     
     public static final int BLACK_KEY_WIDTH = 2 * 40;
     public static final int WHITE_KEY_WIDTH = 2 * 60;

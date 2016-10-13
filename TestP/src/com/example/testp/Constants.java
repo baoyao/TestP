@@ -11,6 +11,11 @@ public class Constants {
 
     public static final int MAIN_ACTIVITY_REQUEST_CODE=1;
     public static final int SONG_LIST_ACTIVITY_REQUEST_CODE=2;
+
+    public static final int MSG_PREPARE_PLAY=1;
+    public static final int MSG_PLAY_BY_SOUND_ID=2;
+    public static final int MSG_STOP_PLAY=3;
+    
     
 
 }

@@ -1,5 +1,6 @@
 package com.example.testp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -116,16 +117,24 @@ public class RhythmController {
 
     public void addRhythViewToLayout(int soundId){
         mRhythmLayout.addView(buildRhythmView(soundId));
-        if(mRhythmLayout.getChildCount()==1){
-            startPlayAnim();
-        }
+        TimeRecord record=new TimeRecord();
+        record.soundIndex=soundId;
+        record.startTime=System.currentTimeMillis();
+        mTimeRecord.add(record);
+        Log.v("tt", "SoundId: "+record.soundIndex+" start time: "+record.startTime);
+    }
+    
+    public void refreshRhythView(){
+        
     }
 
     private boolean isRun = true;
     private RefreshThread mRefreshThread;
 
-    private void startPlayAnim() {
+    public void startPlayAnim() {
         if (mRefreshThread == null) {
+            needStopAnim=false;
+            mTimeRecord.clear();
             isRun = true;
             isResume = true;
             sleepTime = 10;
@@ -137,6 +146,12 @@ public class RhythmController {
         }
     }
 
+    private boolean needStopAnim=false;
+    
+    public void needStopAnim(){
+        needStopAnim=true;
+    }
+    
     private void stopPlayAnim() {
         if (mRefreshThread != null) {
             isRun = false;
@@ -185,10 +200,32 @@ public class RhythmController {
                     mRhythmLayout.removeViewAt(i);
                     int soundId=Integer.parseInt(rhythmView.getTag().toString());
                     mSoundPool.play(soundId, 1, 1, 0, 0, 1);
+                    
+                    //print log
+                    for(int j=0;j<mTimeRecord.size();j++){
+                        if(mTimeRecord.get(j).soundIndex==soundId){
+                            mTimeRecord.get(j).endTime=System.currentTimeMillis();
+                            Log.v("tt","index: "+j);
+                            Log.v("tt", "SoundId: "+mTimeRecord.get(j).soundIndex+" change time: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j).startTime));
+                            
+                            if(j>0){
+                                Log.v("tt", "start time change: "+(mTimeRecord.get(j).startTime-mTimeRecord.get(j-1).startTime));
+                                Log.v("tt", "end time change: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j-1).endTime));
+                            }
+                            break;
+                        }
+                    }
                 }
             }
-            if(mRhythmLayout.getChildCount()==0){
+            if(mRhythmLayout.getChildCount()==0&&needStopAnim){
                 stopPlayAnim();
+
+                //print log
+//                Log.v("tt", "\n---\n");
+                for(int i=0;i<mTimeRecord.size();i++){
+                    TimeRecord r=mTimeRecord.get(i);
+//                    Log.v("tt", "SoundId: "+r.soundIndex+" change time: "+(r.endTime-r.startTime));
+                }
             }
         }
     };
@@ -201,6 +238,15 @@ public class RhythmController {
     public void resume() {
         isResume = true;
         sleepTime = 10;
+    }
+    
+    List<TimeRecord> mTimeRecord=new ArrayList<TimeRecord>();
+    
+    class TimeRecord{
+        int soundIndex;
+        long startTime;
+        long endTime;
+        
     }
 
 }

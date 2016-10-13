@@ -3,7 +3,7 @@ package com.example.testp;
 import java.util.List;
 
 import android.os.Handler;
-import android.util.Log;
+import android.os.Message;
 
 /**
  * @author houen.bao
@@ -24,6 +24,7 @@ public class SoundPlayer {
             return;
         }
         if (mPlayThread == null) {
+            mHandler.sendEmptyMessage(Constants.MSG_PREPARE_PLAY);
             isRun = true;
             currentTime = -1;
             playIndex = 0;
@@ -56,6 +57,7 @@ public class SoundPlayer {
                 if (!isPause) {
                     if (playIndex > resultList.size() - 1) {
                         SoundPlayer.this.stop();
+                        mHandler.sendEmptyMessage(Constants.MSG_STOP_PLAY);
                         return;
                     }
                     currentTime++;
@@ -63,9 +65,11 @@ public class SoundPlayer {
                     if (timeToPlay) {
                         int sId = resultList.get(playIndex).getSound();
 //                        mSoundPool.play(sId, 1, 1, 0, 0, 1);
-                        mHandler.sendEmptyMessage(sId);
+                        Message mess=mHandler.obtainMessage();
+                        mess.arg1=sId;
+                        mess.what=Constants.MSG_PLAY_BY_SOUND_ID;
+                        mHandler.sendMessage(mess);
                         playIndex++;
-                        Log.v("tt", "play...");
                     }
                 }
                 try {
@@ -78,7 +82,7 @@ public class SoundPlayer {
     }
 
     private long calcMillis(int[] time) {
-        return (time[0] * 60 * 60) + (time[1] * 60) + time[2];
+        return (time[0] * 60 * 100) + (time[1] * 100) + time[2];
     }
 
     public void pause() {
