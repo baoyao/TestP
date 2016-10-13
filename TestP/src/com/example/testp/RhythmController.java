@@ -6,8 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.media.SoundPool;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -91,7 +89,6 @@ public class RhythmController {
                 }
             }
             mKeyButtonList.get(i).setRhythmViewLeftMargin(crrentLeftMargin + leftMargin);
-//            mRhythmLayout.addView(buildRhythmView(PublicCache.keyButtonList.get(i).getSoundId()));
             crrentLeftMargin += leftMargin + 40;
         }
     }
@@ -125,122 +122,44 @@ public class RhythmController {
     }
     
     public void refreshRhythView(){
-        
-    }
-
-    private boolean isRun = true;
-    private RefreshThread mRefreshThread;
-
-    public void startPlayAnim() {
-        if (mRefreshThread == null) {
-            needStopAnim=false;
-            mTimeRecord.clear();
-            isRun = true;
-            isResume = true;
-            sleepTime = 10;
-            mRefreshThread = new RefreshThread();
-            mRefreshThread.start();
-        }else{
-            stopPlayAnim();
-            startPlayAnim();
-        }
-    }
-
-    private boolean needStopAnim=false;
-    
-    public void needStopAnim(){
-        needStopAnim=true;
-    }
-    
-    private void stopPlayAnim() {
-        if (mRefreshThread != null) {
-            isRun = false;
-            try {
-                mRefreshThread.interrupt();
-            } catch (Exception e) {
-                e.printStackTrace();
+        for (int i = 0; i < mRhythmLayout.getChildCount(); i++) {
+            ImageView rhythmView = (ImageView) mRhythmLayout.getChildAt(i);
+            FrameLayout.LayoutParams params = (android.widget.FrameLayout.LayoutParams) rhythmView
+                    .getLayoutParams();
+            params.setMargins(params.leftMargin, params.topMargin + DOWN_SPEED, params.rightMargin, params.bottomMargin);
+            rhythmView.setLayoutParams(params);
+            if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
+                mRhythmLayout.removeViewAt(i);
+                int soundId=Integer.parseInt(rhythmView.getTag().toString());
+                mSoundPool.play(soundId, 1, 1, 0, 0, 1);
+                printLog(soundId);
             }
-            mRefreshThread = null;
         }
     }
 
-    private boolean isResume = true;
-    private int sleepTime = 10;
-    private final int REFRESH_MSG = 1;
-    
     private final int DOWN_SPEED=PublicConfig.RHYTHM_VIEW_ANIM_SPEED;
-
-    class RefreshThread extends Thread {
-        @Override
-        public void run() {
-            while (isRun) {
-                if (isResume) {
-                    mHandler.sendEmptyMessage(REFRESH_MSG);
-                }
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            for (int i = 0; i < mRhythmLayout.getChildCount(); i++) {
-                ImageView rhythmView = (ImageView) mRhythmLayout.getChildAt(i);
-                FrameLayout.LayoutParams params = (android.widget.FrameLayout.LayoutParams) rhythmView
-                        .getLayoutParams();
-                params.setMargins(params.leftMargin, params.topMargin + DOWN_SPEED, params.rightMargin, params.bottomMargin);
-                rhythmView.setLayoutParams(params);
-                if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
-                    mRhythmLayout.removeViewAt(i);
-                    int soundId=Integer.parseInt(rhythmView.getTag().toString());
-                    mSoundPool.play(soundId, 1, 1, 0, 0, 1);
-                    
-                    //print log
-                    for(int j=0;j<mTimeRecord.size();j++){
-                        if(mTimeRecord.get(j).soundIndex==soundId){
-                            mTimeRecord.get(j).endTime=System.currentTimeMillis();
-                            Log.v("tt","index: "+j);
-                            Log.v("tt", "SoundId: "+mTimeRecord.get(j).soundIndex+" change time: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j).startTime));
-                            
-                            if(j>0){
-                                Log.v("tt", "start time change: "+(mTimeRecord.get(j).startTime-mTimeRecord.get(j-1).startTime));
-                                Log.v("tt", "end time change: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j-1).endTime));
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-            if(mRhythmLayout.getChildCount()==0&&needStopAnim){
-                stopPlayAnim();
-
-                //print log
-//                Log.v("tt", "\n---\n");
-                for(int i=0;i<mTimeRecord.size();i++){
-                    TimeRecord r=mTimeRecord.get(i);
-//                    Log.v("tt", "SoundId: "+r.soundIndex+" change time: "+(r.endTime-r.startTime));
-                }
-            }
-        }
-    };
-
-    public void pause() {
-        isResume = false;
-        sleepTime = 1000;
-    }
-
-    public void resume() {
-        isResume = true;
-        sleepTime = 10;
+    private List<TimeRecord> mTimeRecord=new ArrayList<TimeRecord>();
+    
+    public int getRhythmNum(){
+        return mRhythmLayout.getChildCount();
     }
     
-    List<TimeRecord> mTimeRecord=new ArrayList<TimeRecord>();
+    private void printLog(int soundId){
+        //print log
+        for(int j=0;j<mTimeRecord.size();j++){
+            if(mTimeRecord.get(j).soundIndex==soundId){
+                mTimeRecord.get(j).endTime=System.currentTimeMillis();
+                Log.v("tt","index: "+j);
+                Log.v("tt", "SoundId: "+mTimeRecord.get(j).soundIndex+" change time: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j).startTime));
+                
+                if(j>0){
+                    Log.v("tt", "start time change: "+(mTimeRecord.get(j).startTime-mTimeRecord.get(j-1).startTime));
+                    Log.v("tt", "end time change: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j-1).endTime));
+                }
+                break;
+            }
+        }
+    }
     
     class TimeRecord{
         int soundIndex;

@@ -29,7 +29,7 @@ public class EditTimeActivity extends Activity {
 
     private LinearLayout mItemsLayout;
     private EditText songNameEditText;
-    private int mRequestCode=-1;
+    private int mRequestCode = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,21 +37,26 @@ public class EditTimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
-        songNameEditText=(EditText) this.findViewById(R.id.song_name);
-        
-        Intent intent=this.getIntent();
-        mRequestCode=intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
-        String soundData=intent.getStringExtra(Constants.EXT_SOUND_DATA);
-        if(soundData!=null){
-            String soundName=intent.getStringExtra(Constants.EXT_SONG_NAME);
+        songNameEditText = (EditText) this.findViewById(R.id.song_name);
+
+        Intent intent = this.getIntent();
+        mRequestCode = intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
+        String soundData = intent.getStringExtra(Constants.EXT_SOUND_DATA);
+        if (soundData != null) {
+            String soundName = intent.getStringExtra(Constants.EXT_SONG_NAME);
             songNameEditText.setText(soundName);
-            List<SoundInfo> soundList=Utils.jsonParseToSoundObject(soundData);
-            for(int i=0;i<soundList.size();i++){
-                SoundInfo info=soundList.get(i);
-                EditItemView item=createEditView(info.getIndex());
-                item.setTime(info.getTime());
-                item.setSound(info.getSound());
-                mItemsLayout.addView(item,mItemsLayout.getChildCount()-1);
+            try {
+                List<SoundInfo> soundList = Utils.jsonParseToSoundObject(soundData);
+                for (int i = 0; i < soundList.size(); i++) {
+                    SoundInfo info = soundList.get(i);
+                    EditItemView item = createEditView(info.getIndex());
+                    item.setTime(info.getTime());
+                    item.setSound(info.getSound());
+                    mItemsLayout.addView(item, mItemsLayout.getChildCount() - 1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -59,8 +64,8 @@ public class EditTimeActivity extends Activity {
     private long calcMillis(int[] time) {
         return (time[0] * 60 * 60) + (time[1] * 60) + time[2];
     }
-    
-    private OnTimeChangedListener mOnTimeChangedListener=new OnTimeChangedListener() {
+
+    private OnTimeChangedListener mOnTimeChangedListener = new OnTimeChangedListener() {
         @Override
         public void onChanged(EditItemView itemView) {
             List<EditItemView> list = new ArrayList<EditItemView>();
@@ -84,7 +89,7 @@ public class EditTimeActivity extends Activity {
                         str += "/";
                     }
                 }
-                Toast.makeText(EditTimeActivity.this, "第" + str+"个的时间小于前面的！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditTimeActivity.this, "第" + str + "个的时间小于前面的！", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -141,55 +146,63 @@ public class EditTimeActivity extends Activity {
     }
 
     public void onSaveButtonClick(View view) {
-        String songName=songNameEditText.getText().toString();
-        if("".equals(songName.trim())){
-            Toast.makeText(this, "Song name is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        List<SoundInfo> list = new ArrayList<SoundInfo>();
-        for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
-            if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
-                EditItemView item = (EditItemView) mItemsLayout.getChildAt(i);
-                int index = item.getIndex();
-                int sound = item.getSoundIndex();
-                int[] time = item.getTime();
-                SoundInfo info = new SoundInfo();
-                info.setIndex(index);
-                info.setSound(sound);
-                info.setTime(time);
-                list.add(info);
+        try {
+            String songName = songNameEditText.getText().toString();
+            if ("".equals(songName.trim())) {
+                Toast.makeText(this, "Song name is null", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
 
-        String soundJson = Utils.soundObjectParseToJson(list);
+            List<SoundInfo> list = new ArrayList<SoundInfo>();
+            for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
+                if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
+                    EditItemView item = (EditItemView) mItemsLayout.getChildAt(i);
+                    int index = item.getIndex();
+                    int sound = item.getSoundIndex();
+                    int[] time = item.getTime();
+                    SoundInfo info = new SoundInfo();
+                    info.setIndex(index);
+                    info.setSound(sound);
+                    info.setTime(time);
+                    list.add(info);
+                }
+            }
 
-        makeNewFile(songName);
-        File file=new File(SONG_PATH+"/"+songName+".txt");
-        boolean write=writeTxtFile(soundJson,file);
-        Log.v("tt","write: "+write);
-        
-        Intent intent=new Intent();
-        intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
-        if(mRequestCode==Constants.SONG_LIST_ACTIVITY_REQUEST_CODE){
-            intent.setClass(this, SongListActivity.class);
-        }else{
-            intent.setClass(this, MainActivity.class);
+            String soundJson = Utils.soundObjectParseToJson(list);
+
+            makeNewFile(songName);
+            File file = new File(SONG_PATH + "/" + songName + ".txt");
+            boolean write = writeTxtFile(soundJson, file);
+
+            if (!write) {
+                return;
+            }
+
+            Intent intent = new Intent();
+            intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
+            if (mRequestCode == Constants.SONG_LIST_ACTIVITY_REQUEST_CODE) {
+                intent.setClass(this, SongListActivity.class);
+            } else {
+                intent.setClass(this, MainActivity.class);
+            }
+            this.setResult(RESULT_OK, intent);
+            this.finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
         }
-        this.setResult(RESULT_OK, intent);
-        this.finish();
     }
 
-    private final String SONG_PATH=PublicConfig.SONG_PATH;
-    
-    private File makeNewFile(String fileName){
-        File dir=new File(SONG_PATH);
-        if(!dir.exists()){
+    private final String SONG_PATH = PublicConfig.SONG_PATH;
+
+    private File makeNewFile(String fileName) {
+        File dir = new File(SONG_PATH);
+        if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        File file=new File(SONG_PATH+"/"+fileName+".txt");
-        if(!file.exists()){
+        File file = new File(SONG_PATH + "/" + fileName + ".txt");
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -198,8 +211,8 @@ public class EditTimeActivity extends Activity {
         }
         return file;
     }
-    
-    private boolean writeTxtFile(String content, File fileName){
+
+    private boolean writeTxtFile(String content, File fileName) {
         boolean flag = false;
         FileOutputStream o = null;
         try {
@@ -219,7 +232,5 @@ public class EditTimeActivity extends Activity {
         }
         return flag;
     }
-    
-
 
 }

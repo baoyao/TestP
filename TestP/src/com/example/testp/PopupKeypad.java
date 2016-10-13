@@ -50,7 +50,11 @@ public class PopupKeypad {
         mTagView = (Button) view;
         mTimeView = timeView;
         mOnTimeChangedListener=onTimeChangedListener;
-        dataList = mContext.getResources().getStringArray(R.array.times);
+        if(view.getId()==R.id.time3){
+            dataList = Utils.getMillTimeData();
+        }else{
+            dataList = Utils.getTimeData();
+        }
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
     }

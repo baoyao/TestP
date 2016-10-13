@@ -30,5 +30,29 @@ public class Utils {
         return mGson.toJson(soundList, new TypeToken<List<SoundInfo>>() {
         }.getType());
     }
+    
+    public static String[] getTimeData(){
+        String[] times = new String[60];
+        for(int i=0;i<60;i++){
+            if(i<10){
+                times[i]="0"+i;
+            }else{
+                times[i]=""+i;
+            }
+        }
+        return times;
+    }
+
+    public static String[] getMillTimeData(){
+        String[] times = new String[100];
+        for(int i=0;i<100;i++){
+            if(i<10){
+                times[i]="0"+i;
+            }else{
+                times[i]=""+i;
+            }
+        }
+        return times;
+    }
 
 }

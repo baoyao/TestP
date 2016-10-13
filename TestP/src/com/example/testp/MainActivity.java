@@ -28,8 +28,6 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private SoundPool mSoundPool;
     private SoundPlayer mSoundPlayer;
     
-    private RhythmController mRhythmController;
-    
     private String mSongJson;
     
     private int[] mSoundId;
@@ -123,25 +121,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                         break;
                     }
                 }
-                mRhythmController=new RhythmController(MainActivity.this,mSoundPool,keyButtonList);
-                mSoundPlayer = new SoundPlayer(new Handler(){
-                    @Override
-                    public void handleMessage(Message msg) {
-                        switch(msg.what){
-                        case Constants.MSG_PREPARE_PLAY:
-                            mRhythmController.startPlayAnim();
-                            break;
-                        case Constants.MSG_PLAY_BY_SOUND_ID:
-                            mRhythmController.addRhythViewToLayout(msg.arg1);
-                            break;
-                        case Constants.MSG_STOP_PLAY:
-                            mRhythmController.needStopAnim();
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                });
+                mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,keyButtonList);
                 dismissDialog();
             }
 
@@ -297,13 +277,11 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         case R.id.pause:
             if(mSoundPlayer!=null){
                 mSoundPlayer.pause();
-                mRhythmController.pause();
             }
             break;
         case R.id.resume:
             if(mSoundPlayer!=null){
                 mSoundPlayer.resume();
-                mRhythmController.resume();
             }
             break;
         case R.id.songlist:
