@@ -116,12 +116,11 @@ public class RhythmController {
     }
 
     public void addRhythViewToLayout(int soundId){
-        ImageView imageView=buildRhythmView(soundId);
-        mRhythmLayout.addView(imageView);
-        int left=((FrameLayout.LayoutParams)imageView.getLayoutParams()).leftMargin;
-        Message msg=mHandler.obtainMessage(1, left, 0);
-        mHandler.removeMessages(1);
-        mHandler.sendMessageDelayed(msg, 100);
+        mRhythmLayout.addView(buildRhythmView(soundId));
+        
+        if(mRhythmLayout.getChildCount()==1){
+            smoothToDownView(soundId);
+        }
         
         TimeRecord record=new TimeRecord();
         record.soundIndex=soundId;
@@ -129,10 +128,25 @@ public class RhythmController {
         mTimeRecord.add(record);
     }
     
+    private void smoothToDownView(int soundId){
+        int leftMargin=mKeyButtonList.get(soundId-1).getRhythmViewLeftMargin();
+        Message msg=mHandler.obtainMessage(MSG_SMOOTH_TO_DOWN_VIEW, leftMargin, 0);
+        mHandler.removeMessages(MSG_SMOOTH_TO_DOWN_VIEW);
+        mHandler.sendMessageAtTime(msg, 0);
+    }
+
+    private final int MSG_SMOOTH_TO_DOWN_VIEW =1;
+    
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            mScrollview.smoothScrollTo(msg.arg1-200, 0);
+            switch(msg.what){
+            case MSG_SMOOTH_TO_DOWN_VIEW:
+                mScrollview.smoothScrollTo(msg.arg1-400, 0);
+                break;
+                default:
+                    break;
+            }
         }
     };
     
@@ -144,10 +158,14 @@ public class RhythmController {
             params.setMargins(params.leftMargin, params.topMargin + DOWN_SPEED, params.rightMargin, params.bottomMargin);
             rhythmView.setLayoutParams(params);
             if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
-                mRhythmLayout.removeViewAt(i);
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 mSoundPool.play(soundId, 1, 1, 0, 0, 1);
-                //printLog(soundId);
+                mRhythmLayout.removeViewAt(i);
+//                printLog(soundId);
+            }
+            if(params.topMargin == (PublicConfig.RHYTHM_VIEW_END_LINE-(DOWN_SPEED*50))){
+                int soundId=Integer.parseInt(rhythmView.getTag().toString());
+                smoothToDownView(soundId);
             }
         }
     }
