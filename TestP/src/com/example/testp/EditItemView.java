@@ -23,7 +23,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     private OnAddListener mOnAddListener;
 
     private TextView mIndexView;
-    private PopupKeypad mKeypad;
+    private ItemPopupKeypad mKeypad;
     private String[] mTimeList,mMillTimeList,mSoundList;
     
     private OnTimeChangedListener mOnTimeChangedListener;
@@ -97,7 +97,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
 
         mIndexView = (TextView) this.findViewById(R.id.index);
 
-        mKeypad = new PopupKeypad(mContext);
+        mKeypad = new ItemPopupKeypad(mContext);
 
         mSound = (Button) this.findViewById(R.id.sound);
         mSound.setOnClickListener(this);

@@ -8,6 +8,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="5dp" >
 
         <Button
@@ -22,6 +23,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="song1" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="增量值:" />
+        
+        <Button
+            android:id="@+id/grow_num1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onGrowButtonClick"
+            android:text="00"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":" />
+        
+        <Button
+            android:id="@+id/grow_num2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onGrowButtonClick"
+            android:text="00"/>
     </LinearLayout>
 
     <View
@@ -31,6 +57,7 @@
         android:background="#000000" />
 
     <HorizontalScrollView
+        android:id="@+id/items_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp" >

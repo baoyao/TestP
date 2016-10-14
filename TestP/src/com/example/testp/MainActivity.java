@@ -12,8 +12,6 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -54,7 +52,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                     loadAssetSounds();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.v("tt", "Exception " + e);
+                    Log.v(this.toString(), "Exception " + e);
                 }
                 return mSoundId.length;
             }
@@ -255,7 +253,6 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
             mSongJson=data.getStringExtra(Constants.EXT_SOUND_DATA);
-            Log.v("tt","onResume mSongJson: "+mSongJson);
             if(mSongJson!=null){
                 mSoundPlayer.play(mSongJson);
             }

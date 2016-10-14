@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author houen.bao
  * @date Sep 27, 2016 2:27:34 PM
  */
-public class PopupKeypad {
+public class ItemPopupKeypad {
 
     private Context mContext;
     private String[] dataList;
@@ -27,7 +27,7 @@ public class PopupKeypad {
     private PopupWindow mKeyPopupWindow;
     private EditItemView mTimeView;
 
-    public PopupKeypad(Context context) {
+    public ItemPopupKeypad(Context context) {
         this.mContext = context;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.keypad, null);
@@ -47,8 +47,8 @@ public class PopupKeypad {
     }
 
     public void showTimeKeypad(EditItemView timeView,View view, OnTimeChangedListener onTimeChangedListener) {
-        mTagView = (Button) view;
         mTimeView = timeView;
+        mTagView = (Button) view;
         mOnTimeChangedListener=onTimeChangedListener;
         if(view.getId()==R.id.time3){
             dataList = Utils.getMillTimeData();

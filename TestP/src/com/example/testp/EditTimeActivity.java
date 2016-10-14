@@ -9,17 +9,21 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.testp.EditItemView.OnAddListener;
 import com.example.testp.EditItemView.OnDeleteListener;
 import com.example.testp.EditItemView.OnTimeChangedListener;
+import com.example.testp.GeneralPopupKeypad.OnKeypadItemClickListener;
 
 /**
  * @author houen.bao
@@ -30,6 +34,8 @@ public class EditTimeActivity extends Activity {
     private LinearLayout mItemsLayout;
     private EditText songNameEditText;
     private int mRequestCode = -1;
+    private Button mGrowButton1,mGrowButton2;
+    private HorizontalScrollView mItemsScrollview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,7 @@ public class EditTimeActivity extends Activity {
         this.setContentView(R.layout.edit_main);
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
         songNameEditText = (EditText) this.findViewById(R.id.song_name);
+        mItemsScrollview=(HorizontalScrollView) this.findViewById(R.id.items_scrollview);
 
         Intent intent = this.getIntent();
         mRequestCode = intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
@@ -59,10 +66,49 @@ public class EditTimeActivity extends Activity {
                 Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
             }
         }
+        
+        initGrowButton();
+    }
+    
+    private void initGrowButton(){
+        mGrowButton1=(Button) this.findViewById(R.id.grow_num1);
+        mGrowButton2=(Button) this.findViewById(R.id.grow_num2);
+        mGrowButton1.setText("01");
+        mGrowButton1.setTag(""+1);
+    }
+    
+    private int[] getGrowNum(){
+        int g1=mGrowButton1.getTag() == null ? 0 : Integer.parseInt(mGrowButton1.getTag().toString());
+        int g2=mGrowButton2.getTag() == null ? 0 : Integer.parseInt(mGrowButton2.getTag().toString());
+        return new int[]{g1,g2};
+    }
+    
+    public void onGrowButtonClick(final View view) {
+        String[] tempData =null;
+        switch (view.getId()) {
+        case R.id.grow_num1: 
+            tempData = Utils.getTimeData();
+            break;
+        case R.id.grow_num2: 
+            tempData = Utils.getMillTimeData();
+            break;
+        default:
+            break;
+        }
+        
+        final String[] timeData=tempData;
+        
+        new GeneralPopupKeypad(this).showKeypad(view, timeData, new OnKeypadItemClickListener() {
+            @Override
+            public void onItemClick(int position, View clickItemView, View tagView) {
+                ((Button) view).setText(timeData[position]);
+                view.setTag("" + position);
+            }
+        });
     }
 
     private long calcMillis(int[] time) {
-        return (time[0] * 60 * 60) + (time[1] * 60) + time[2];
+        return (time[0] * 60 * 100) + (time[1] * 100) + time[2];
     }
 
     private OnTimeChangedListener mOnTimeChangedListener = new OnTimeChangedListener() {
@@ -99,6 +145,19 @@ public class EditTimeActivity extends Activity {
         mItemsLayout.addView(editItemView, mItemsLayout.getChildCount() - 1);
         updateItemsIndex();
         updateItemsTime(editItemView);
+        scrollToEnd();
+    }
+    
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            mItemsScrollview.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+        }
+    };
+    
+    private void scrollToEnd(){
+        mHandler.removeMessages(1);
+        mHandler.sendEmptyMessageDelayed(1, 100);
     }
 
     private void updateItemsIndex() {
@@ -112,8 +171,10 @@ public class EditTimeActivity extends Activity {
     private void updateItemsTime(EditItemView itemView) {
         int index = itemView.getIndex();
         if (index > 1) {
-            ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(((EditItemView) mItemsLayout
-                    .getChildAt(index - 1 - 1)).getTime());
+            int[] t1= getGrowNum();
+            int[] t2=((EditItemView) mItemsLayout
+                    .getChildAt(index - 1 - 1)).getTime();
+            ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(new int[]{t2[0],(t2[1]+t1[0]),(t2[2]+t1[1])});
         }
     }
 
@@ -139,6 +200,7 @@ public class EditTimeActivity extends Activity {
                 mItemsLayout.addView(subEditItemView, index);
                 updateItemsIndex();
                 updateItemsTime(subEditItemView);
+                scrollToEnd();
             }
         });
         editItemView.setOnTimeChangedListener(mOnTimeChangedListener);

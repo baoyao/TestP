@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TestP</string>
+    <string name="app_name">Piano</string>
     <string name="hello_world">Hello world!</string>
 
     <string-array name="sound_list">

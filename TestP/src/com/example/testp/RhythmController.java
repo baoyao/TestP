@@ -6,8 +6,11 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.media.SoundPool;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 
 /**
@@ -20,21 +23,21 @@ public class RhythmController {
     private FrameLayout mRhythmLayout;
     private List<KeyButton> mKeyButtonList;
     private SoundPool mSoundPool;
+    private HorizontalScrollView mScrollview;
 
     public RhythmController(Context context, SoundPool soundPool, List<KeyButton> keyButtonList) {
         mContext = context;
         mKeyButtonList=keyButtonList;
         mSoundPool=soundPool;
         mRhythmLayout = (FrameLayout) ((Activity) context).findViewById(R.id.rhythm_anim_layout);
-        crrentLeftMargin = 0;
+        mScrollview=(HorizontalScrollView) ((Activity) context).findViewById(R.id.scrollview);
         mRhythmLayout.removeAllViews();
         buildRhythmItem();
     }
 
     // 120-80=40
-    private int crrentLeftMargin = 0;
-
     private void buildRhythmItem() {
+        int crrentLeftMargin = 0;
         for (int i = 0; i < mKeyButtonList.size(); i++) {
             int leftMargin = 0;
             if (i < 3) {
@@ -113,13 +116,25 @@ public class RhythmController {
     }
 
     public void addRhythViewToLayout(int soundId){
-        mRhythmLayout.addView(buildRhythmView(soundId));
+        ImageView imageView=buildRhythmView(soundId);
+        mRhythmLayout.addView(imageView);
+        int left=((FrameLayout.LayoutParams)imageView.getLayoutParams()).leftMargin;
+        Message msg=mHandler.obtainMessage(1, left, 0);
+        mHandler.removeMessages(1);
+        mHandler.sendMessageDelayed(msg, 100);
+        
         TimeRecord record=new TimeRecord();
         record.soundIndex=soundId;
         record.startTime=System.currentTimeMillis();
         mTimeRecord.add(record);
-        Log.v("tt", "SoundId: "+record.soundIndex+" start time: "+record.startTime);
     }
+    
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            mScrollview.smoothScrollTo(msg.arg1-200, 0);
+        }
+    };
     
     public void refreshRhythView(){
         for (int i = 0; i < mRhythmLayout.getChildCount(); i++) {
@@ -132,7 +147,7 @@ public class RhythmController {
                 mRhythmLayout.removeViewAt(i);
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 mSoundPool.play(soundId, 1, 1, 0, 0, 1);
-                printLog(soundId);
+                //printLog(soundId);
             }
         }
     }
@@ -149,7 +164,6 @@ public class RhythmController {
         for(int j=0;j<mTimeRecord.size();j++){
             if(mTimeRecord.get(j).soundIndex==soundId){
                 mTimeRecord.get(j).endTime=System.currentTimeMillis();
-                Log.v("tt","index: "+j);
                 Log.v("tt", "SoundId: "+mTimeRecord.get(j).soundIndex+" change time: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j).startTime));
                 
                 if(j>0){
