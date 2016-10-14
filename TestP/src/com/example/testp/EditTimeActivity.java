@@ -174,7 +174,19 @@ public class EditTimeActivity extends Activity {
             int[] t1= getGrowNum();
             int[] t2=((EditItemView) mItemsLayout
                     .getChildAt(index - 1 - 1)).getTime();
-            ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(new int[]{t2[0],(t2[1]+t1[0]),(t2[2]+t1[1])});
+            int[] time=new int[]{t2[0],(t2[1]+t1[0]),(t2[2]+t1[1])};
+            if(time[2]>=100){
+                time[1]+=1;
+                time[2]-=100;
+            }
+            if(time[1]>=60){
+                time[0]+=1;
+                time[1]-=60;
+            }
+            if(time[0]>=60){
+                time[0]=59;
+            }
+            ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(time);
         }
     }
 
