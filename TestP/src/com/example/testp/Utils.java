@@ -2,6 +2,10 @@ package com.example.testp;
 
 import java.util.List;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -53,6 +57,31 @@ public class Utils {
             }
         }
         return times;
+    }
+    
+
+    private static final String SHARED_PREFERENCES_NAME = "shared_preferences";
+    private static final String SHARED_PREFERENCES_KEY = "shared_preferences_key";
+
+    public static boolean saveConfiguration(Context context, boolean value) {
+        try {
+            SharedPreferences preferences = context.getSharedPreferences(
+                    SHARED_PREFERENCES_NAME, Context.MODE_WORLD_WRITEABLE);
+            Editor editor = preferences.edit();
+            editor.putBoolean(SHARED_PREFERENCES_KEY, value);
+            editor.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean getConfiguration(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(
+                SHARED_PREFERENCES_NAME, Context.MODE_WORLD_WRITEABLE);
+        boolean value = preferences.getBoolean(SHARED_PREFERENCES_KEY, false);
+        return value;
     }
 
 }

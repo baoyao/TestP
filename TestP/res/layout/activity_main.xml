@@ -106,6 +106,15 @@
             android:layout_marginLeft="5dp"
             android:onClick="onControlButtonClick"
             android:text="Resume" />
+        
+        <Button 
+            android:id="@+id/mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:onClick="onControlButtonClick"
+            android:text="Mute OFF"/>
+        
         <Button
             android:id="@+id/songlist"
             android:layout_width="wrap_content"

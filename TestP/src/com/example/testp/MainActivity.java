@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
+        ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this)?"Mute ON":"Mute OFF");
         
         createDialog();
         setDialogMaxProgress(MAX_SOUNDS);
@@ -325,6 +327,15 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             break;
         case R.id.songlist:
             startActivityForResult(new Intent(MainActivity.this, SongListActivity.class), Constants.MAIN_ACTIVITY_REQUEST_CODE);
+            break;
+        case R.id.mute:
+            if(Utils.getConfiguration(this)){
+                ((Button)view).setText("Mute OFF");
+                Utils.saveConfiguration(this, false);
+            }else{
+                ((Button)view).setText("Mute ON");
+                Utils.saveConfiguration(this, true);
+            }
             break;
         default:
             break;
