@@ -15,8 +15,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 import com.example.testp.KeyButton.OnTouchDownListener;
 import com.example.testp.RhythmController.TimeRecord;
@@ -30,10 +32,10 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private SoundPlayer mSoundPlayer;
     
     private String mSongJson;
-    
     private int[] mSoundId;
-    
     private ResultLayout mResult;
+    private SeekBar mSpeedController;
+    private TextView mSpeedValaue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
         ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this)?"Mute ON":"Mute OFF");
+        mSpeedController=(SeekBar) this.findViewById(R.id.speed_controller);
+        mSpeedValaue=(TextView) this.findViewById(R.id.speed_vlaue);
+        mSpeedController.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
         
         createDialog();
         setDialogMaxProgress(MAX_SOUNDS);
@@ -139,6 +144,29 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             }
         }.execute(null, null);
     }
+    
+    private OnSeekBarChangeListener mOnSeekBarChangeListener=new OnSeekBarChangeListener(){
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            int p=0;
+            if(progress!=(seekBar.getMax()/2)){
+                p=progress-(seekBar.getMax()/2);
+            }
+            mSpeedValaue.setText(""+p);
+            mSoundPlayer.setSpeed(p);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            
+        }
+    };
     
     private KeyButton buildBlackKey(int keyIndex, int soundId) {
         KeyButton view = new KeyButton(this);

@@ -64,7 +64,11 @@ public class KeyButton extends Button {
         case KeyEvent.ACTION_DOWN:
             if(mOnTouchDownListener!=null){
                 mOnTouchDownListener.onTouchDown(this);
+                RhythmController.isKeyButtonTouchDown = true;
             }
+            break;
+        case KeyEvent.ACTION_UP:
+            RhythmController.isKeyButtonTouchDown = false;
             break;
         default:
             break;

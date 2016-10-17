@@ -128,11 +128,15 @@ public class RhythmController {
         mTimeRecord.add(record);
     }
     
+    public static boolean isKeyButtonTouchDown = false;
+    
     private void smoothToDownView(int soundId){
-        int leftMargin=mKeyButtonList.get(soundId-1).getRhythmViewLeftMargin();
-        Message msg=mHandler.obtainMessage(MSG_SMOOTH_TO_DOWN_VIEW, leftMargin, 0);
-        mHandler.removeMessages(MSG_SMOOTH_TO_DOWN_VIEW);
-        mHandler.sendMessageAtTime(msg, 0);
+        if(!isKeyButtonTouchDown){
+            int leftMargin=mKeyButtonList.get(soundId-1).getRhythmViewLeftMargin();
+            Message msg=mHandler.obtainMessage(MSG_SMOOTH_TO_DOWN_VIEW, leftMargin, 0);
+            mHandler.removeMessages(MSG_SMOOTH_TO_DOWN_VIEW);
+            mHandler.sendMessageAtTime(msg, 0);
+        }
     }
 
     private final int MSG_SMOOTH_TO_DOWN_VIEW =1;

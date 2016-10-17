@@ -18,7 +18,7 @@
                 android:id="@+id/rhythm_anim_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="2"/>
+                android:layout_weight="2" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -30,7 +30,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="4dp"
-                    android:background="#00ffff"/>
+                    android:background="#00ffff" />
+
                 <FrameLayout
                     android:id="@+id/key_layout"
                     android:layout_width="wrap_content"
@@ -57,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginTop="10dp"
-        android:gravity="center">
+        android:gravity="center" >
     </com.example.testp.ResultLayout>
 
     <Button
@@ -72,56 +73,85 @@
         android:id="@+id/controller_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:visibility="invisible" >
 
-        <Button
-            android:id="@+id/jump_to_edit"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:onClick="onControlButtonClick"
-            android:text="Edit song" />
+            android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:onClick="onControlButtonClick"
-            android:text="Play" />
+            <Button
+                android:id="@+id/jump_to_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:onClick="onControlButtonClick"
+                android:text="Edit song" />
 
-        <Button
-            android:id="@+id/pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:onClick="onControlButtonClick"
-            android:text="Pause" />
+            <Button
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:onClick="onControlButtonClick"
+                android:text="Play" />
 
-        <Button
-            android:id="@+id/resume"
+            <Button
+                android:id="@+id/pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:onClick="onControlButtonClick"
+                android:text="Pause" />
+
+            <Button
+                android:id="@+id/resume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:onClick="onControlButtonClick"
+                android:text="Resume" />
+
+            <Button
+                android:id="@+id/mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:onClick="onControlButtonClick"
+                android:text="Mute OFF" />
+
+            <Button
+                android:id="@+id/songlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:onClick="onControlButtonClick"
+                android:text="Song list" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:onClick="onControlButtonClick"
-            android:text="Resume" />
-        
-        <Button 
-            android:id="@+id/mute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:onClick="onControlButtonClick"
-            android:text="Mute OFF"/>
-        
-        <Button
-            android:id="@+id/songlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:onClick="onControlButtonClick"
-            android:text="Song list" />
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed:"/>
+            <SeekBar
+                android:id="@+id/speed_controller"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:max="20"
+                android:progress="10" />
+            <TextView
+                android:id="@+id/speed_vlaue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"/>
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>

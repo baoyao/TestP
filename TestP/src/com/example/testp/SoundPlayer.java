@@ -72,9 +72,16 @@ public class SoundPlayer {
     private int playIndex = -1;
     private boolean isPause = false;
     private int sleepTime = 10;
+    
+    private long playSpeed=0;
+    
+    public void setSpeed(long playSpeed){
+        this.playSpeed=playSpeed;
+    }
 
     private class PlayThread extends Thread {
-        List<SoundInfo> resultList;
+        private List<SoundInfo> resultList;
+        private long speedCount=0;
 
         public PlayThread(String json) {
             resultList = Utils.jsonParseToSoundObject(json);
@@ -87,10 +94,11 @@ public class SoundPlayer {
                     if (playIndex < resultList.size()) {
                         if (startTime == -1) {
                             startTime = System.currentTimeMillis();
+                            speedCount = 0;
                             mHandler.sendEmptyMessage(MSG_START_PLAY);
                         }
-                        long changeTime = (System.currentTimeMillis() - startTime) / 10;
-
+                        speedCount+=playSpeed;
+                        long changeTime = ((System.currentTimeMillis() - startTime) / 10)+speedCount;
                         boolean timeToPlay = changeTime >= calcMillis(resultList.get(playIndex).getTime());
                         if (timeToPlay) {
                             int sId = resultList.get(playIndex).getSound();
