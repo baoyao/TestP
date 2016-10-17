@@ -14,9 +14,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.testp.KeyButton.OnTouchDownListener;
+import com.example.testp.RhythmController.TimeRecord;
 
 public class MainActivity extends Activity implements OnTouchDownListener {
 
@@ -29,6 +31,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private String mSongJson;
     
     private int[] mSoundId;
+    
+    private ResultLayout mResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         setContentView(R.layout.activity_main);
         final LinearLayout mWhiteLayout = (LinearLayout) this.findViewById(R.id.white_layout);
         final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
-
+        
+        mResult=(ResultLayout) this.findViewById(R.id.result_layout);
+        
         createDialog();
         setDialogMaxProgress(MAX_SOUNDS);
 
@@ -246,6 +252,42 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     public void onTouchDown(View v) {
         int sId = ((KeyButton) v).getSoundId();
         mSoundPool.play(sId, 1, 1, 0, 0, 1);
+        showResult(sId);
+    }
+    
+    private void showResult(int soundId){
+        List<TimeRecord> record=mSoundPlayer.getRecord();
+        long currentTime=System.currentTimeMillis();
+        boolean isFind=false;
+        for(int i=0;i<record.size();i++){
+            if(record.get(i).soundIndex==soundId){
+                isFind=true;
+                if(isMiddleOfTheGiveTime(currentTime,record.get(i).endTime)){
+                    //great
+                    mResult.showResult(ResultLayout.RESULT_1);
+                    return;
+                }
+                if(isMiddleOfTheGiveTime(currentTime,record.get(i).preTime)){
+                    mResult.showResult(ResultLayout.RESULT_2);
+                    return;
+                }
+                mResult.showResult(ResultLayout.RESULT_3);
+                break;
+            }
+        }
+        if(!isFind){
+            mResult.showResult(ResultLayout.RESULT_3);
+        }
+    }
+    
+    private boolean isMiddleOfTheGiveTime(long currentTime,long tagTime){
+        if(tagTime==0){
+            return false;
+        }
+        if(currentTime>=(tagTime-500)&&currentTime<=(tagTime+500)){
+            return true;
+        }
+        return false;
     }
     
     @Override
@@ -295,6 +337,22 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             controllerView.setVisibility(View.VISIBLE);
         }else{
             controllerView.setVisibility(View.INVISIBLE);
+        }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mSoundPlayer!=null){
+            mSoundPlayer.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mSoundPlayer!=null){
+            mSoundPlayer.pause();
         }
     }
 

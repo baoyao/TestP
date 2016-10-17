@@ -161,11 +161,12 @@ public class RhythmController {
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 mSoundPool.play(soundId, 1, 1, 0, 0, 1);
                 mRhythmLayout.removeViewAt(i);
-//                printLog(soundId);
+                recordEndLog(soundId);
             }
             if(params.topMargin == (PublicConfig.RHYTHM_VIEW_END_LINE-(DOWN_SPEED*50))){
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 smoothToDownView(soundId);
+                recordPreTime(soundId);
             }
         }
     }
@@ -177,17 +178,40 @@ public class RhythmController {
         return mRhythmLayout.getChildCount();
     }
     
-    private void printLog(int soundId){
-        //print log
-        for(int j=0;j<mTimeRecord.size();j++){
-            if(mTimeRecord.get(j).soundIndex==soundId){
-                mTimeRecord.get(j).endTime=System.currentTimeMillis();
-                Log.v("tt", "SoundId: "+mTimeRecord.get(j).soundIndex+" change time: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j).startTime));
+    public List<TimeRecord> getRecord(){
+        return mTimeRecord;
+    }
+    
+    public void startPlay(){
+        mTimeRecord.clear();
+    }
+    
+    public void stopPlay(){
+        mTimeRecord.clear();
+    }
+    
+    private void recordPreTime(int soundId){
+        for(int i=0;i<mTimeRecord.size();i++){
+            if(mTimeRecord.get(i).soundIndex==soundId){
+                mTimeRecord.get(i).preTime=System.currentTimeMillis();
+                break;
+            }
+        }
+    }
+    
+    private void recordEndLog(int soundId){
+        for(int i=0;i<mTimeRecord.size();i++){
+            if(mTimeRecord.get(i).soundIndex==soundId){
+                mTimeRecord.get(i).endTime=System.currentTimeMillis();
+                /*Log.v("tt", "SoundId: "+mTimeRecord.get(i).soundIndex+" change time: "+(mTimeRecord.get(i).endTime-mTimeRecord.get(i).startTime));
                 
-                if(j>0){
-                    Log.v("tt", "start time change: "+(mTimeRecord.get(j).startTime-mTimeRecord.get(j-1).startTime));
-                    Log.v("tt", "end time change: "+(mTimeRecord.get(j).endTime-mTimeRecord.get(j-1).endTime));
-                }
+                if(i>0){
+                    Log.v("tt", "start time change: "+(mTimeRecord.get(i).startTime-mTimeRecord.get(i-1).startTime));
+
+                    Log.v("tt", "pre time change: "+(mTimeRecord.get(i).preTime-mTimeRecord.get(i-1).preTime));
+                    
+                    Log.v("tt", "end time change: "+(mTimeRecord.get(i).endTime-mTimeRecord.get(i-1).endTime));
+                }*/
                 break;
             }
         }
@@ -196,8 +220,8 @@ public class RhythmController {
     class TimeRecord{
         int soundIndex;
         long startTime;
+        long preTime;
         long endTime;
-        
     }
 
 }

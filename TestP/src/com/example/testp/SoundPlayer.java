@@ -2,6 +2,8 @@ package com.example.testp;
 
 import java.util.List;
 
+import com.example.testp.RhythmController.TimeRecord;
+
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +20,8 @@ public class SoundPlayer {
 
     private static final int MSG_PLAY_BY_SOUND_ID = 1;
     private static final int MSG_REFRESH_RHYTHVIEW = 2;
+    private static final int MSG_START_PLAY = 3;
+    private static final int MSG_STOP_PLAY = 4;
 
     public SoundPlayer(MainActivity mainActivity, SoundPool soundPool, List<KeyButton> keyButtonList) {
         mRhythmController = new RhythmController(mainActivity, soundPool, keyButtonList);
@@ -32,6 +36,12 @@ public class SoundPlayer {
                 break;
             case MSG_REFRESH_RHYTHVIEW:
                 mRhythmController.refreshRhythView();
+                break;
+            case MSG_START_PLAY:
+                mRhythmController.startPlay();
+                break;
+            case MSG_STOP_PLAY:
+                mRhythmController.stopPlay();
                 break;
             default:
                 break;
@@ -77,6 +87,7 @@ public class SoundPlayer {
                     if (playIndex < resultList.size()) {
                         if (startTime == -1) {
                             startTime = System.currentTimeMillis();
+                            mHandler.sendEmptyMessage(MSG_START_PLAY);
                         }
                         long changeTime = (System.currentTimeMillis() - startTime) / 10;
 
@@ -93,6 +104,7 @@ public class SoundPlayer {
                     } else {
                         if (mRhythmController.getRhythmNum() == 0) {
                             SoundPlayer.this.stop();
+                            mHandler.sendEmptyMessage(MSG_STOP_PLAY);
                             return;
                         }
                     }
@@ -132,6 +144,10 @@ public class SoundPlayer {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public List<TimeRecord> getRecord(){
+        return mRhythmController.getRecord();
     }
 
 }
