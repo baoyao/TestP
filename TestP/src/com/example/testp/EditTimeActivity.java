@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,8 +140,8 @@ public class EditTimeActivity extends Activity {
                         long time2 = Utils.parseTime(itemView.getTime());
                         
                         if (Utils.getConfiguration(EditTimeActivity.this, Constants.KEY_AUTO_CHANGE_TIME, true)) {
-                            changedTime = Utils.parseTime(tempItemView.getTime()) + changedTime;
-                            tempItemView.setTime(Utils.parseTime(changedTime));
+                            long parseTime = Utils.parseTime(tempItemView.getTime()) + changedTime;
+                            tempItemView.setTime(Utils.parseTime(parseTime));
                         }
                         if (time1 < time2) {
                             list.add(tempItemView);
