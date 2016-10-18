@@ -15,6 +15,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -32,10 +35,11 @@ import com.example.testp.GeneralPopupKeypad.OnKeypadItemClickListener;
 public class EditTimeActivity extends Activity {
 
     private LinearLayout mItemsLayout;
-    private EditText songNameEditText;
+    private EditText mSongNameEditText;
     private int mRequestCode = -1;
     private Button mGrowButton1,mGrowButton2;
     private HorizontalScrollView mItemsScrollview;
+    private CheckBox mAutoChangeTimeCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +47,16 @@ public class EditTimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
-        songNameEditText = (EditText) this.findViewById(R.id.song_name);
+        mSongNameEditText = (EditText) this.findViewById(R.id.song_name);
+        mAutoChangeTimeCheckBox=(CheckBox) this.findViewById(R.id.auto_change_time);
         mItemsScrollview=(HorizontalScrollView) this.findViewById(R.id.items_scrollview);
-
+        
         Intent intent = this.getIntent();
         mRequestCode = intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
         String soundData = intent.getStringExtra(Constants.EXT_SOUND_DATA);
         if (soundData != null) {
             String soundName = intent.getStringExtra(Constants.EXT_SONG_NAME);
-            songNameEditText.setText(soundName);
+            mSongNameEditText.setText(soundName);
             try {
                 List<SoundInfo> soundList = Utils.jsonParseToSoundObject(soundData);
                 for (int i = 0; i < soundList.size(); i++) {
@@ -66,15 +71,30 @@ public class EditTimeActivity extends Activity {
                 Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
             }
         }
+        mSongNameEditText.setSelection(mSongNameEditText.getText().toString().length());
         
         initGrowButton();
+        initAutoChangeTime();
+    }
+    
+    private void initAutoChangeTime(){
+        mAutoChangeTimeCheckBox.setChecked(Utils.getConfiguration(this, Constants.KEY_AUTO_CHANGE_TIME, true));
+        mAutoChangeTimeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Utils.saveConfiguration(EditTimeActivity.this, Constants.KEY_AUTO_CHANGE_TIME, isChecked);
+            }
+        });
     }
     
     private void initGrowButton(){
         mGrowButton1=(Button) this.findViewById(R.id.grow_num1);
         mGrowButton2=(Button) this.findViewById(R.id.grow_num2);
-        mGrowButton1.setText("01");
-        mGrowButton1.setTag(""+1);
+//        mGrowButton1.setText("01");
+//        mGrowButton1.setTag(""+1);
+
+        mGrowButton2.setText("50");
+        mGrowButton2.setTag(""+50);
     }
     
     private int[] getGrowNum(){
@@ -107,20 +127,21 @@ public class EditTimeActivity extends Activity {
         });
     }
 
-    private long calcMillis(int[] time) {
-        return (time[0] * 60 * 100) + (time[1] * 100) + time[2];
-    }
-
     private OnTimeChangedListener mOnTimeChangedListener = new OnTimeChangedListener() {
         @Override
-        public void onChanged(EditItemView itemView) {
+        public void onChanged(EditItemView itemView,long changedTime) {
             List<EditItemView> list = new ArrayList<EditItemView>();
             for (int i = 0; i < mItemsLayout.getChildCount(); i++) {
                 if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
                     EditItemView tempItemView = (EditItemView) mItemsLayout.getChildAt(i);
                     if (tempItemView.getIndex() > itemView.getIndex()) {
-                        long time1 = calcMillis(tempItemView.getTime());
-                        long time2 = calcMillis(itemView.getTime());
+                        long time1 = Utils.parseTime(tempItemView.getTime());
+                        long time2 = Utils.parseTime(itemView.getTime());
+                        
+                        if (Utils.getConfiguration(EditTimeActivity.this, Constants.KEY_AUTO_CHANGE_TIME, true)) {
+                            changedTime = Utils.parseTime(tempItemView.getTime()) + changedTime;
+                            tempItemView.setTime(Utils.parseTime(changedTime));
+                        }
                         if (time1 < time2) {
                             list.add(tempItemView);
                         }
@@ -175,17 +196,7 @@ public class EditTimeActivity extends Activity {
             int[] t2=((EditItemView) mItemsLayout
                     .getChildAt(index - 1 - 1)).getTime();
             int[] time=new int[]{t2[0],(t2[1]+t1[0]),(t2[2]+t1[1])};
-            if(time[2]>=100){
-                time[1]+=1;
-                time[2]-=100;
-            }
-            if(time[1]>=60){
-                time[0]+=1;
-                time[1]-=60;
-            }
-            if(time[0]>=60){
-                time[0]=59;
-            }
+            time=Utils.parseTime(Utils.parseTime(time));
             ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(time);
         }
     }
@@ -221,7 +232,7 @@ public class EditTimeActivity extends Activity {
 
     public void onSaveButtonClick(View view) {
         try {
-            String songName = songNameEditText.getText().toString();
+            String songName = mSongNameEditText.getText().toString();
             if ("".equals(songName.trim())) {
                 Toast.makeText(this, "Song name is null", Toast.LENGTH_SHORT).show();
                 return;

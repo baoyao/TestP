@@ -3,6 +3,7 @@ package com.example.testp;
 import com.example.testp.EditItemView.OnTimeChangedListener;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class ItemPopupKeypad {
     private String[] dataList;
     private Button mTagView;
     private PopupWindow mKeyPopupWindow;
-    private EditItemView mTimeView;
+    private EditItemView mItemView;
 
     public ItemPopupKeypad(Context context) {
         this.mContext = context;
@@ -40,14 +41,14 @@ public class ItemPopupKeypad {
 
     public void showSoundKeypad(View view) {
         mTagView = (Button) view;
-        mTimeView = null;
+        mItemView = null;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         mKeypadAdapter.notifyDataSetChanged();
         mKeyPopupWindow.showAsDropDown(view);
     }
 
-    public void showTimeKeypad(EditItemView timeView,View view, OnTimeChangedListener onTimeChangedListener) {
-        mTimeView = timeView;
+    public void showTimeKeypad(EditItemView itemView,View view, OnTimeChangedListener onTimeChangedListener) {
+        mItemView = itemView;
         mTagView = (Button) view;
         mOnTimeChangedListener=onTimeChangedListener;
         if(view.getId()==R.id.time3){
@@ -65,11 +66,13 @@ public class ItemPopupKeypad {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // TODO Auto-generated method stub
+            long startTime=Utils.parseTime(mItemView.getTime());
             mTagView.setText(dataList[position]);
             mTagView.setTag(""+position);
             mKeyPopupWindow.dismiss();
-            if(mTimeView!=null&&mOnTimeChangedListener!=null){
-                mOnTimeChangedListener.onChanged(mTimeView);
+            long endTime=Utils.parseTime(mItemView.getTime());
+            if(mItemView!=null&&mOnTimeChangedListener!=null){
+                mOnTimeChangedListener.onChanged(mItemView,(endTime-startTime));
             }
         }
     };

@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
-        ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this)?"Mute ON":"Mute OFF");
+        ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this,Constants.KEY_MUTE, false)?"Mute ON":"Mute OFF");
         mSpeedController=(SeekBar) this.findViewById(R.id.speed_controller);
         mSpeedValaue=(TextView) this.findViewById(R.id.speed_vlaue);
         mSpeedController.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -305,7 +305,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 break;
             }
         }
-        if(!isFind){
+        if(mSongJson!=null && !isFind){
             mResult.showResult(ResultLayout.RESULT_3);
         }
     }
@@ -357,12 +357,12 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             startActivityForResult(new Intent(MainActivity.this, SongListActivity.class), Constants.MAIN_ACTIVITY_REQUEST_CODE);
             break;
         case R.id.mute:
-            if(Utils.getConfiguration(this)){
+            if(Utils.getConfiguration(this,Constants.KEY_MUTE, false)){
                 ((Button)view).setText("Mute OFF");
-                Utils.saveConfiguration(this, false);
+                Utils.saveConfiguration(this,Constants.KEY_MUTE, false);
             }else{
                 ((Button)view).setText("Mute ON");
-                Utils.saveConfiguration(this, true);
+                Utils.saveConfiguration(this,Constants.KEY_MUTE, true);
             }
             break;
         default:

@@ -98,8 +98,8 @@ public class SoundPlayer {
                             mHandler.sendEmptyMessage(MSG_START_PLAY);
                         }
                         speedCount+=playSpeed;
-                        long changeTime = ((System.currentTimeMillis() - startTime) / 10)+speedCount;
-                        boolean timeToPlay = changeTime >= calcMillis(resultList.get(playIndex).getTime());
+                        long changeTime = ((System.currentTimeMillis() - startTime) / 10)+(speedCount/10);
+                        boolean timeToPlay = changeTime >= Utils.parseTime(resultList.get(playIndex).getTime());
                         if (timeToPlay) {
                             int sId = resultList.get(playIndex).getSound();
                             // mSoundPool.play(sId, 1, 1, 0, 0, 1);
@@ -125,10 +125,6 @@ public class SoundPlayer {
                 }
             }
         }
-    }
-
-    private long calcMillis(int[] time) {
-        return (time[0] * 60 * 100) + (time[1] * 100) + time[2];
     }
 
     public void pause() {

@@ -158,7 +158,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     }
     
     public interface OnTimeChangedListener {
-        public void onChanged(EditItemView itemView);
+        public void onChanged(EditItemView itemView,long changedTime);
     }
 
 }

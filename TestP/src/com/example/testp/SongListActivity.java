@@ -153,7 +153,7 @@ public class SongListActivity extends Activity {
                                 Utils.soundObjectParseToJson(mSoundList.get(position)));
                         intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
                         intent.putExtra(Constants.EXT_SONG_NAME,
-                                songs[position].substring(0, songs[position].indexOf(".")));
+                                songs[position].substring(0, songs[position].lastIndexOf(".")));
                         startActivityForResult(intent, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
                     }
                 });
@@ -161,7 +161,7 @@ public class SongListActivity extends Activity {
             } else {
                 holder = (Holder) convertView.getTag();
             }
-            holder.name.setText(songs[position]);
+            holder.name.setText(songs[position].substring(0, songs[position].lastIndexOf(".")));
             holder.count.setText(mSoundList.get(position).size() + "");
             return convertView;
         }

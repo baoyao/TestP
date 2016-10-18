@@ -163,7 +163,7 @@ public class RhythmController {
             rhythmView.setLayoutParams(params);
             if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
-                if(!Utils.getConfiguration(mContext)){
+                if(!Utils.getConfiguration(mContext, Constants.KEY_MUTE, false)){
                     mSoundPool.play(soundId, 1, 1, 0, 0, 1);
                 }
                 mRhythmLayout.removeViewAt(i);

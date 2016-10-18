@@ -35,6 +35,14 @@ public class Utils {
         }.getType());
     }
     
+    public static long parseTime(int[] time){
+        return (time[0] * 60 * 100) + (time[1] * 100) + time[2];
+    }
+
+    public static int[] parseTime(long time){
+        return new int[]{(int) (time/(100*60)),(int) ((time%(100*60))/(100)),(int) ((time%(100*60))%100)};
+    }
+
     public static String[] getTimeData(){
         String[] times = new String[60];
         for(int i=0;i<60;i++){
@@ -61,14 +69,13 @@ public class Utils {
     
 
     private static final String SHARED_PREFERENCES_NAME = "shared_preferences";
-    private static final String SHARED_PREFERENCES_KEY = "shared_preferences_key";
 
-    public static boolean saveConfiguration(Context context, boolean value) {
+    public static boolean saveConfiguration(Context context, String key, boolean value) {
         try {
             SharedPreferences preferences = context.getSharedPreferences(
                     SHARED_PREFERENCES_NAME, Context.MODE_WORLD_WRITEABLE);
             Editor editor = preferences.edit();
-            editor.putBoolean(SHARED_PREFERENCES_KEY, value);
+            editor.putBoolean(key, value);
             editor.commit();
             return true;
         } catch (Exception e) {
@@ -77,10 +84,10 @@ public class Utils {
         }
     }
 
-    public static boolean getConfiguration(Context context) {
+    public static boolean getConfiguration(Context context, String key,boolean defaultValue) {
         SharedPreferences preferences = context.getSharedPreferences(
                 SHARED_PREFERENCES_NAME, Context.MODE_WORLD_WRITEABLE);
-        boolean value = preferences.getBoolean(SHARED_PREFERENCES_KEY, false);
+        boolean value = preferences.getBoolean(key, defaultValue);
         return value;
     }
 
