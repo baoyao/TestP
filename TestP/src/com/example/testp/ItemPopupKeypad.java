@@ -66,11 +66,18 @@ public class ItemPopupKeypad {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // TODO Auto-generated method stub
-            long startTime=Utils.parseTime(mItemView.getTime());
+            long startTime=0;
+            if(mItemView!=null){
+                startTime=Utils.parseTime(mItemView.getTime());
+            }
             mTagView.setText(dataList[position]);
             mTagView.setTag(""+position);
             mKeyPopupWindow.dismiss();
-            long endTime=Utils.parseTime(mItemView.getTime());
+            
+            long endTime=0;
+            if(mItemView!=null){
+                endTime=Utils.parseTime(mItemView.getTime());
+            }
             if(mItemView!=null&&mOnTimeChangedListener!=null){
                 mOnTimeChangedListener.onChanged(mItemView,(endTime-startTime));
             }
