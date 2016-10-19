@@ -38,7 +38,7 @@ public class EditTimeActivity extends Activity {
     private LinearLayout mItemsLayout;
     private EditText mSongNameEditText;
     private int mRequestCode = -1;
-    private Button mGrowButton1,mGrowButton2;
+    private Button mGrowButton1,mGrowButton2,mSplitGrow1,mSplitGrow2,mSplitGrowCommit;
     private HorizontalScrollView mItemsScrollview;
     private CheckBox mAutoChangeTimeCheckBox;
 
@@ -91,6 +91,11 @@ public class EditTimeActivity extends Activity {
     private void initGrowButton(){
         mGrowButton1=(Button) this.findViewById(R.id.grow_num1);
         mGrowButton2=(Button) this.findViewById(R.id.grow_num2);
+
+        mSplitGrow1=(Button) this.findViewById(R.id.split_grow_num1);
+        mSplitGrow2=(Button) this.findViewById(R.id.split_grow_num2);
+        mSplitGrowCommit=(Button) this.findViewById(R.id.split_grow_up_commit);
+        
 //        mGrowButton1.setText("01");
 //        mGrowButton1.setTag(""+1);
 
@@ -101,18 +106,32 @@ public class EditTimeActivity extends Activity {
     private int[] getGrowNum(){
         int g1=mGrowButton1.getTag() == null ? 0 : Integer.parseInt(mGrowButton1.getTag().toString());
         int g2=mGrowButton2.getTag() == null ? 0 : Integer.parseInt(mGrowButton2.getTag().toString());
-        return new int[]{g1,g2};
+        return new int[]{0,g1,g2};
+    }
+
+    private int[] getSplitGrowNum(){
+        int g1=mSplitGrow1.getTag() == null ? 0 : Integer.parseInt(mSplitGrow1.getTag().toString());
+        int g2=mSplitGrow2.getTag() == null ? 0 : Integer.parseInt(mSplitGrow2.getTag().toString());
+        return new int[]{0,g1,g2};
     }
     
     public void onGrowButtonClick(final View view) {
         String[] tempData =null;
         switch (view.getId()) {
-        case R.id.grow_num1: 
+        case R.id.grow_num1:
+        case R.id.split_grow_num1:
             tempData = Utils.getTimeData();
             break;
         case R.id.grow_num2: 
+        case R.id.split_grow_num2:
             tempData = Utils.getMillTimeData();
             break;
+        case R.id.split_grow_up_commit:
+            growAllItemTime(true);
+            return;
+        case R.id.split_grow_down_commit:
+            growAllItemTime(false);
+            return;
         default:
             break;
         }
@@ -127,7 +146,24 @@ public class EditTimeActivity extends Activity {
             }
         });
     }
-
+    
+    private void growAllItemTime(boolean isGrowUp) {
+        if (mItemsLayout.getChildCount() < 3) {
+            return;
+        }
+        long splitGrowTime = Utils.parseTime(getSplitGrowNum());
+        if(!isGrowUp){
+            splitGrowTime=splitGrowTime*-1;
+        }
+        for (int i = 1; i < mItemsLayout.getChildCount(); i++) {
+            if (mItemsLayout.getChildAt(i) instanceof EditItemView) {
+                EditItemView item = (EditItemView) mItemsLayout.getChildAt(i);
+                long split=Utils.parseTime(item.getTime())+(splitGrowTime*i);
+                item.setTime(Utils.parseTime(split));
+            }
+        }
+    }
+    
     private OnTimeChangedListener mOnTimeChangedListener = new OnTimeChangedListener() {
         @Override
         public void onChanged(EditItemView itemView,long changedTime) {
@@ -196,8 +232,7 @@ public class EditTimeActivity extends Activity {
             int[] t1= getGrowNum();
             int[] t2=((EditItemView) mItemsLayout
                     .getChildAt(index - 1 - 1)).getTime();
-            int[] time=new int[]{t2[0],(t2[1]+t1[0]),(t2[2]+t1[1])};
-            time=Utils.parseTime(Utils.parseTime(time));
+            int[] time=Utils.parseTime(Utils.parseTime(t1)+Utils.parseTime(t2));
             ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(time);
         }
     }
