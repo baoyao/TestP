@@ -5,6 +5,7 @@
     <string name="hello_world">Hello world!</string>
 
     <string-array name="sound_list">
+        <item>0</item>
         <item>6低4</item>
         <item>67低4</item>
         <item>7低4</item>

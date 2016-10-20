@@ -194,6 +194,7 @@ public class RhythmController {
     
     public void stopPlay(){
         mTimeRecord.clear();
+        mRhythmLayout.removeAllViews();
     }
     
     private void recordPreTime(int soundId){

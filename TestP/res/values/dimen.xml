@@ -3,4 +3,6 @@
     <dimen name="times_spinner_width">50dp</dimen>
     <dimen name="times_spinner_height">40dp</dimen>
     
+    <dimen name="edit_item_width">1dp</dimen>
+    
 </resources>

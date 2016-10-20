@@ -73,6 +73,7 @@
         android:id="@+id/controller_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:visibility="invisible" >
 
@@ -85,10 +86,10 @@
                 android:id="@+id/jump_to_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="35dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Edit song" />
+                android:text="编辑歌曲" />
 
             <Button
                 android:id="@+id/play"
@@ -97,25 +98,26 @@
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Play" />
+                android:text="播放" />
 
             <Button
-                android:id="@+id/pause"
+                android:id="@+id/pause_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Pause" />
-
+                android:text="暂停播放" />
+            
             <Button
-                android:id="@+id/resume"
+                android:id="@+id/stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Resume" />
+                android:text="停止" />
+            
 
             <Button
                 android:id="@+id/mute"
@@ -124,7 +126,7 @@
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Mute OFF" />
+                android:text="打开弹奏音" />
 
             <Button
                 android:id="@+id/songlist"
@@ -133,19 +135,20 @@
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:text="Song list" />
+                android:text="歌曲列表" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Speed:" />
+                android:text="播放速度调节:" />
 
             <SeekBar
                 android:id="@+id/speed_controller"

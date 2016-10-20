@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @author houen.bao
@@ -23,14 +24,15 @@ public class GeneralPopupKeypad {
     private View mTagView;
     private PopupWindow mKeyPopupWindow;
     private OnKeypadItemClickListener mOnKeypadItemClickListener;
+    private GridView mKeypadGridView;
 
     public GeneralPopupKeypad(Context context) {
         this.mContext = context;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         View contentView = LayoutInflater.from(mContext).inflate(R.layout.keypad, null);
-        GridView keypadGridView = (GridView) contentView.findViewById(R.id.keypad_gridview);
-        keypadGridView.setAdapter(mKeypadAdapter);
-        keypadGridView.setOnItemClickListener(mKeypadOnItemClickListener);
+        mKeypadGridView = (GridView) contentView.findViewById(R.id.keypad_gridview);
+        mKeypadGridView.setAdapter(mKeypadAdapter);
+        mKeypadGridView.setOnItemClickListener(mKeypadOnItemClickListener);
         mKeyPopupWindow = new PopupWindow(contentView, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
         mKeyPopupWindow.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.keypad_bg));
     }

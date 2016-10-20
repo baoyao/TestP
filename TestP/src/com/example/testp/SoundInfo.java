@@ -10,6 +10,7 @@ public class SoundInfo {
     private int index;
     private int sound;
     private int[] time;
+    private String soundName;
 
     public int getIndex() {
         return index;
@@ -35,4 +36,11 @@ public class SoundInfo {
         this.time = time;
     }
 
+    public String getSoundName() {
+        return soundName;
+    }
+
+    public void setSoundName(String soundName) {
+        this.soundName = soundName;
+    }
 }

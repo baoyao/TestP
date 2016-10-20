@@ -3,5 +3,6 @@
     <drawable name="key_down">@drawable/white_down</drawable>
     <drawable name="key_up">@drawable/white_up</drawable>
     <drawable name="keypad_bg">#00ffff</drawable>
+    <drawable name="edit_item_background">#000000</drawable>
     
 </resources>

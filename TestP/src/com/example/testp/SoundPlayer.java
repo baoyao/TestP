@@ -7,6 +7,7 @@ import com.example.testp.RhythmController.TimeRecord;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 /**
  * @author houen.bao
@@ -54,12 +55,12 @@ public class SoundPlayer {
             return;
         }
         if (mPlayThread == null) {
-            isRun = true;
             startTime = -1;
             playIndex = 0;
             isPause = false;
             sleepTime = 10;
             mPlayThread = new PlayThread(json);
+            mPlayThread.isRun = true;
             mPlayThread.start();
         } else {
             stop();
@@ -67,13 +68,12 @@ public class SoundPlayer {
         }
     }
 
-    private boolean isRun = true;
     private long startTime = -1;
     private int playIndex = -1;
     private boolean isPause = false;
     private int sleepTime = 10;
-    
     private long playSpeed=0;
+    private boolean isFirstPause=true;
     
     public void setSpeed(long playSpeed){
         this.playSpeed=playSpeed;
@@ -81,7 +81,9 @@ public class SoundPlayer {
 
     private class PlayThread extends Thread {
         private List<SoundInfo> resultList;
+        private boolean isRun = false;
         private long speedCount=0;
+        private long parseTime=0;
 
         public PlayThread(String json) {
             resultList = Utils.jsonParseToSoundObject(json);
@@ -97,26 +99,36 @@ public class SoundPlayer {
                             speedCount = 0;
                             mHandler.sendEmptyMessage(MSG_START_PLAY);
                         }
+                        if(!isFirstPause){
+                            isFirstPause = true;
+                            startTime=System.currentTimeMillis()-parseTime;
+                        }
                         speedCount+=playSpeed;
                         long changeTime = ((System.currentTimeMillis() - startTime) / 10)+(speedCount/10);
                         boolean timeToPlay = changeTime >= Utils.parseTime(resultList.get(playIndex).getTime());
                         if (timeToPlay) {
                             int sId = resultList.get(playIndex).getSound();
                             // mSoundPool.play(sId, 1, 1, 0, 0, 1);
-                            Message mess = mHandler.obtainMessage();
-                            mess.arg1 = sId;
-                            mess.what = MSG_PLAY_BY_SOUND_ID;
-                            mHandler.sendMessage(mess);
+                            if(sId != 0){
+                                Message mess = mHandler.obtainMessage();
+                                mess.arg1 = sId;
+                                mess.what = MSG_PLAY_BY_SOUND_ID;
+                                mHandler.sendMessage(mess);
+                            }
                             playIndex++;
                         }
                     } else {
                         if (mRhythmController.getRhythmNum() == 0) {
                             SoundPlayer.this.stop();
-                            mHandler.sendEmptyMessage(MSG_STOP_PLAY);
                             return;
                         }
                     }
                     mHandler.sendEmptyMessage(MSG_REFRESH_RHYTHVIEW);
+                }else{
+                    if(isFirstPause){
+                        isFirstPause=false;
+                        parseTime=System.currentTimeMillis()-startTime;
+                    }
                 }
                 try {
                     Thread.sleep(sleepTime);
@@ -124,10 +136,22 @@ public class SoundPlayer {
                     e.printStackTrace();
                 }
             }
+            if(!isRun){
+                try {
+                    this.interrupt();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
-
+    
+    public boolean isPlaying(){
+        return mPlayThread==null ? false : mPlayThread.isRun;
+    }
+    
     public void pause() {
+        isFirstPause=true;
         isPause = true;
         sleepTime = 500;
     }
@@ -140,7 +164,7 @@ public class SoundPlayer {
     public void stop() {
         if (mPlayThread != null) {
             try {
-                isRun = false;
+                mPlayThread.isRun = false;
                 mPlayThread.interrupt();
                 mPlayThread = null;
             } catch (Exception e) {
@@ -148,6 +172,7 @@ public class SoundPlayer {
                 e.printStackTrace();
             }
         }
+        mHandler.sendEmptyMessage(MSG_STOP_PLAY);
     }
     
     public List<TimeRecord> getRecord(){

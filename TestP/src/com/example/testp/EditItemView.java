@@ -61,12 +61,12 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     }
     
     public void setSound(int soundIndex){
-        mSound.setText(mSoundList[soundIndex-1]);
-        mSound.setTag((soundIndex-1)+"");
+        mSound.setText(mSoundList[soundIndex]);
+        mSound.setTag((soundIndex)+"");
     }
 
     public int getSoundIndex() {
-        return mSound.getTag() == null ? 1 : Integer.parseInt(mSound.getTag().toString())+1;
+        return mSound.getTag() == null ? 0 : Integer.parseInt(mSound.getTag().toString());
     }
 
     public int[] getTime() {

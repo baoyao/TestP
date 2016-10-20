@@ -5,124 +5,128 @@
     android:background="#ffffff"
     android:orientation="vertical" >
 
-    
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/save"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:onClick="onSaveButtonClick"
-            android:text="Save" />
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
 
-        <EditText
-            android:id="@+id/song_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="song1" />
+            <EditText
+                android:id="@+id/song_name"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                android:text="song1" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="增量值:" />
+            <Button
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:onClick="onSaveButtonClick"
+                android:text="保存" />
 
-        <Button
-            android:id="@+id/grow_num1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:onClick="onGrowButtonClick"
-            android:text="00" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="增量值:" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":" />
+            <Button
+                android:id="@+id/grow_num1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="00" />
 
-        <Button
-            android:id="@+id/grow_num2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:onClick="onGrowButtonClick"
-            android:text="00" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="自动改变后面的时间:" />
+            <Button
+                android:id="@+id/grow_num2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="00" />
 
-        <CheckBox
-            android:id="@+id/auto_change_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true" />
-        
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal" >
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="所有间隔时间改变值为:" />
-        
-        <Button
-            android:id="@+id/split_grow_num1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:onClick="onGrowButtonClick"
-            android:text="00" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="自动改变后面的时间:" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=":" />
+            <CheckBox
+                android:id="@+id/auto_change_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/split_grow_num2"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:onClick="onGrowButtonClick"
-            android:text="00" />
-        
-        <Button
-            android:id="@+id/split_grow_up_commit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:layout_marginLeft="5dp"
-            android:onClick="onGrowButtonClick"
-            android:text="增加" />
-        
-        <Button
-            android:id="@+id/split_grow_down_commit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector"
-            android:layout_marginLeft="5dp"
-            android:onClick="onGrowButtonClick"
-            android:text="减低" />
-    </LinearLayout>
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="所有间隔时间改变值为:" />
+
+            <Button
+                android:id="@+id/split_grow_num1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="00" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":" />
+
+            <Button
+                android:id="@+id/split_grow_num2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="00" />
+
+            <Button
+                android:id="@+id/split_grow_up_commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="增加" />
+
+            <Button
+                android:id="@+id/split_grow_down_commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/button_selector"
+                android:onClick="onGrowButtonClick"
+                android:text="减低" />
+        </LinearLayout>
     </LinearLayout>
 
     <View
@@ -148,9 +152,10 @@
                 android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onAddButtonClick"
-                android:text="Add" />
+                android:text="增加" />
         </LinearLayout>
     </HorizontalScrollView>
 

@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
-        ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this,Constants.KEY_MUTE, false)?"Mute ON":"Mute OFF");
+        ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this,Constants.KEY_MUTE, false)?"打开弹奏音":"关闭弹奏音");
         mSpeedController=(SeekBar) this.findViewById(R.id.speed_controller);
         mSpeedValaue=(TextView) this.findViewById(R.id.speed_vlaue);
         mSpeedController.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -305,7 +305,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 break;
             }
         }
-        if(mSongJson!=null && !isFind){
+        if(mSoundPlayer!=null && mSoundPlayer.isPlaying() && !isFind){
             mResult.showResult(ResultLayout.RESULT_3);
         }
     }
@@ -325,8 +325,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
             mSongJson=data.getStringExtra(Constants.EXT_SOUND_DATA);
-            if(mSongJson!=null){
+            if(mSongJson!=null && mSoundPlayer!=null){
                 mSoundPlayer.play(mSongJson);
+                ((Button)this.findViewById(R.id.pause_resume)).setText("暂停播放");
             }
         }
     }
@@ -343,14 +344,20 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 mSoundPlayer.play(mSongJson);
             }
             break;
-        case R.id.pause:
+        case R.id.pause_resume:
             if(mSoundPlayer!=null){
-                mSoundPlayer.pause();
+                if(((Button)view).getText().toString().equals("暂停播放")){
+                    mSoundPlayer.pause();
+                    ((Button)view).setText("继续播放");
+                }else{
+                    mSoundPlayer.resume();
+                    ((Button)view).setText("暂停播放");
+                }
             }
             break;
-        case R.id.resume:
+        case R.id.stop:
             if(mSoundPlayer!=null){
-                mSoundPlayer.resume();
+                mSoundPlayer.stop();
             }
             break;
         case R.id.songlist:
@@ -358,10 +365,10 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             break;
         case R.id.mute:
             if(Utils.getConfiguration(this,Constants.KEY_MUTE, false)){
-                ((Button)view).setText("Mute OFF");
+                ((Button)view).setText("关闭弹奏音");
                 Utils.saveConfiguration(this,Constants.KEY_MUTE, false);
             }else{
-                ((Button)view).setText("Mute ON");
+                ((Button)view).setText("打开弹奏音");
                 Utils.saveConfiguration(this,Constants.KEY_MUTE, true);
             }
             break;

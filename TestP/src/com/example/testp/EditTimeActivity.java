@@ -38,7 +38,7 @@ public class EditTimeActivity extends Activity {
     private LinearLayout mItemsLayout;
     private EditText mSongNameEditText;
     private int mRequestCode = -1;
-    private Button mGrowButton1,mGrowButton2,mSplitGrow1,mSplitGrow2,mSplitGrowCommit;
+    private Button mGrowButton1,mGrowButton2,mSplitGrow1,mSplitGrow2;
     private HorizontalScrollView mItemsScrollview;
     private CheckBox mAutoChangeTimeCheckBox;
 
@@ -94,7 +94,6 @@ public class EditTimeActivity extends Activity {
 
         mSplitGrow1=(Button) this.findViewById(R.id.split_grow_num1);
         mSplitGrow2=(Button) this.findViewById(R.id.split_grow_num2);
-        mSplitGrowCommit=(Button) this.findViewById(R.id.split_grow_up_commit);
         
 //        mGrowButton1.setText("01");
 //        mGrowButton1.setTag(""+1);
@@ -268,6 +267,8 @@ public class EditTimeActivity extends Activity {
 
     public void onSaveButtonClick(View view) {
         try {
+
+            String[] soundList = getResources().getStringArray(R.array.sound_list);
             String songName = mSongNameEditText.getText().toString();
             if ("".equals(songName.trim())) {
                 Toast.makeText(this, "Song name is null", Toast.LENGTH_SHORT).show();
@@ -284,6 +285,7 @@ public class EditTimeActivity extends Activity {
                     SoundInfo info = new SoundInfo();
                     info.setIndex(index);
                     info.setSound(sound);
+                    info.setSoundName(soundList[sound]);
                     info.setTime(time);
                     list.add(info);
                 }
