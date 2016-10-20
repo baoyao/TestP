@@ -25,8 +25,9 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     private TextView mIndexView;
     private ItemPopupKeypad mKeypad;
     private String[] mTimeList,mMillTimeList,mSoundList;
-    
+
     private OnTimeChangedListener mOnTimeChangedListener;
+    private OnSoundChangedListener mOnSoundChangedListener;
 
     public EditItemView(Context context) {
         this(context, null, 0);
@@ -47,10 +48,6 @@ public class EditItemView extends LinearLayout implements OnClickListener {
         mSoundList = mContext.getResources().getStringArray(R.array.sound_list);
     }
 
-    public void setOnTimeChangedListener(OnTimeChangedListener onTimeChangedListener){
-        mOnTimeChangedListener=onTimeChangedListener;
-    }
-
     public void setIndex(int index) {
         mIndex = index;
         mIndexView.setText("" + index);
@@ -63,6 +60,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     public void setSound(int soundIndex){
         mSound.setText(mSoundList[soundIndex]);
         mSound.setTag((soundIndex)+"");
+        mOnSoundChangedListener.onChanged(this);
     }
 
     public int getSoundIndex() {
@@ -125,7 +123,7 @@ public class EditItemView extends LinearLayout implements OnClickListener {
             }
             break;
         case R.id.sound:
-            mKeypad.showSoundKeypad(mSound);
+            mKeypad.showSoundKeypad(this,mSound,mOnSoundChangedListener);
             break;
         case R.id.time1:
             mKeypad.showTimeKeypad(this,mTime1,mOnTimeChangedListener);
@@ -141,6 +139,14 @@ public class EditItemView extends LinearLayout implements OnClickListener {
         }
     }
 
+    public void setOnTimeChangedListener(OnTimeChangedListener onTimeChangedListener){
+        mOnTimeChangedListener=onTimeChangedListener;
+    }
+    
+    public void setOnSoundChangedListener(OnSoundChangedListener onSoundChangedListener){
+        mOnSoundChangedListener=onSoundChangedListener;
+    }
+    
     public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
         mOnDeleteListener = onDeleteListener;
     }
@@ -160,5 +166,10 @@ public class EditItemView extends LinearLayout implements OnClickListener {
     public interface OnTimeChangedListener {
         public void onChanged(EditItemView itemView,long changedTime);
     }
+
+    public interface OnSoundChangedListener {
+        public void onChanged(EditItemView itemView);
+    }
+
 
 }

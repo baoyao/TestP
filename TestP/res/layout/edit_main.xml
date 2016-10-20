@@ -22,7 +22,7 @@
             <EditText
                 android:id="@+id/song_name"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="37dp"
                 android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:text="song1" />
@@ -131,10 +131,30 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2px"
+        android:layout_height="1dp"
         android:layout_marginTop="5dp"
         android:background="#000000" />
+    
+    <HorizontalScrollView
+        android:id="@+id/items_review_scrollview"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginTop="3dp" >
+        <LinearLayout
+            android:id="@+id/items_review_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+        </LinearLayout>
+    </HorizontalScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="3dp"
+        android:background="#000000" />
+    
     <HorizontalScrollView
         android:id="@+id/items_scrollview"
         android:layout_width="wrap_content"

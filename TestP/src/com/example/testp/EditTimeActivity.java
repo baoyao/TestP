@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.testp.EditItemView.OnAddListener;
 import com.example.testp.EditItemView.OnDeleteListener;
+import com.example.testp.EditItemView.OnSoundChangedListener;
 import com.example.testp.EditItemView.OnTimeChangedListener;
 import com.example.testp.GeneralPopupKeypad.OnKeypadItemClickListener;
 
@@ -35,12 +37,13 @@ import com.example.testp.GeneralPopupKeypad.OnKeypadItemClickListener;
  */
 public class EditTimeActivity extends Activity {
 
-    private LinearLayout mItemsLayout;
+    private LinearLayout mItemsLayout,mItemsReviewLayout;
     private EditText mSongNameEditText;
     private int mRequestCode = -1;
     private Button mGrowButton1,mGrowButton2,mSplitGrow1,mSplitGrow2;
-    private HorizontalScrollView mItemsScrollview;
+    private HorizontalScrollView mItemsScrollview,mItemsReviewScrollview;
     private CheckBox mAutoChangeTimeCheckBox;
+    private String[] soundList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,12 @@ public class EditTimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
+        mItemsScrollview=(HorizontalScrollView) this.findViewById(R.id.items_scrollview);
+        mItemsReviewLayout = (LinearLayout) this.findViewById(R.id.items_review_layout);
+        mItemsReviewScrollview=(HorizontalScrollView) this.findViewById(R.id.items_review_scrollview);
         mSongNameEditText = (EditText) this.findViewById(R.id.song_name);
         mAutoChangeTimeCheckBox=(CheckBox) this.findViewById(R.id.auto_change_time);
-        mItemsScrollview=(HorizontalScrollView) this.findViewById(R.id.items_scrollview);
+        soundList = this.getResources().getStringArray(R.array.sound_list);
         
         Intent intent = this.getIntent();
         mRequestCode = intent.getIntExtra(Constants.EXT_REQUEST_CODE, -1);
@@ -236,11 +242,15 @@ public class EditTimeActivity extends Activity {
         }
     }
 
+    private final int EDIT_ITEM_WIDTH = 480;
+    private final int EDIT_ITEM_HEIGHT = 400;
+    private final int EDIT_ITEM_PADDING = 5;
+    
     private EditItemView createEditView(int index) {
         EditItemView editItemView = (EditItemView) LayoutInflater.from(this).inflate(R.layout.edit_item, null);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(500, 450);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(EDIT_ITEM_WIDTH, EDIT_ITEM_HEIGHT);
         editItemView.setLayoutParams(params);
-        editItemView.setPadding(5, 5, 5, 5);
+        editItemView.setPadding(EDIT_ITEM_PADDING, EDIT_ITEM_PADDING, EDIT_ITEM_PADDING, EDIT_ITEM_PADDING);
         editItemView.setIndex(index);
         editItemView.setGravity(Gravity.CENTER);
         editItemView.setOnDeleteListener(new OnDeleteListener() {
@@ -248,6 +258,7 @@ public class EditTimeActivity extends Activity {
             public void onClick(View v) {
                 mItemsLayout.removeView(v);
                 updateItemsIndex();
+                removeItemReview(((EditItemView)v).getIndex()-1);
             }
         });
 
@@ -262,7 +273,40 @@ public class EditTimeActivity extends Activity {
             }
         });
         editItemView.setOnTimeChangedListener(mOnTimeChangedListener);
+        addItemReview(index);
+        editItemView.setOnSoundChangedListener(mOnSoundChangedListener);
         return editItemView;
+    }
+    
+    private void addItemReview(final int index){
+        Button reviewItem=new Button(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(2, 2, 2, 2);
+        reviewItem.setLayoutParams(params);
+        reviewItem.setText("0");
+        reviewItem.setBackgroundResource(R.drawable.button_selector);
+        reviewItem.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mItemsScrollview.smoothScrollTo((index-1)*EDIT_ITEM_WIDTH, 0);
+            }
+        });
+        
+        mItemsReviewLayout.addView(reviewItem,index-1);
+    }
+    
+    private OnSoundChangedListener mOnSoundChangedListener = new OnSoundChangedListener(){
+        @Override
+        public void onChanged(EditItemView itemView) {
+            int index = itemView.getIndex()-1;
+            int position=itemView.getSoundIndex();
+            ((Button)mItemsReviewLayout.getChildAt(index)).setText(soundList[position]);
+        }
+    };
+    
+    private void removeItemReview(int index){
+        mItemsReviewLayout.removeViewAt(index);
     }
 
     public void onSaveButtonClick(View view) {

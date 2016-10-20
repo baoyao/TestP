@@ -16,6 +16,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.testp.EditItemView.OnSoundChangedListener;
 import com.example.testp.EditItemView.OnTimeChangedListener;
 
 /**
@@ -42,9 +43,11 @@ public class ItemPopupKeypad {
         mKeyPopupWindow.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.keypad_bg));
     }
 
-    public void showSoundKeypad(View view) {
-        mTagView = (Button) view;
-        mItemView = null;
+    public void showSoundKeypad(EditItemView itemView,Button view, OnSoundChangedListener onSoundChangedListener) {
+        mTagView = view;
+        mItemView = itemView;
+        mOnSoundChangedListener=onSoundChangedListener;
+        mOnTimeChangedListener=null;
         dataList = mContext.getResources().getStringArray(R.array.sound_list);
         mKeyPopupWindow.showAsDropDown(view);
         mKeypadAdapter.notifyDataSetChanged();
@@ -59,10 +62,11 @@ public class ItemPopupKeypad {
         }
     };
 
-    public void showTimeKeypad(EditItemView itemView,View view, OnTimeChangedListener onTimeChangedListener) {
+    public void showTimeKeypad(EditItemView itemView,Button view, OnTimeChangedListener onTimeChangedListener) {
         mItemView = itemView;
-        mTagView = (Button) view;
+        mTagView = view;
         mOnTimeChangedListener=onTimeChangedListener;
+        mOnSoundChangedListener=null;
         if(view.getId()==R.id.time3){
             dataList = Utils.getMillTimeData();
         }else{
@@ -73,6 +77,8 @@ public class ItemPopupKeypad {
     }
     
     private OnTimeChangedListener mOnTimeChangedListener;
+
+    private OnSoundChangedListener mOnSoundChangedListener;
 
     private OnItemClickListener mKeypadOnItemClickListener = new OnItemClickListener() {
         @Override
@@ -90,8 +96,11 @@ public class ItemPopupKeypad {
             if(mItemView!=null){
                 endTime=Utils.parseTime(mItemView.getTime());
             }
-            if(mItemView!=null&&mOnTimeChangedListener!=null){
+            if(mOnTimeChangedListener != null){
                 mOnTimeChangedListener.onChanged(mItemView,(endTime-startTime));
+            }
+            if(mOnSoundChangedListener != null){
+                mOnSoundChangedListener.onChanged(mItemView);
             }
         }
     };
