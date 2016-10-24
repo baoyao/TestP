@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -41,7 +42,7 @@ public class EditTimeActivity extends Activity {
     private EditText mSongNameEditText;
     private int mRequestCode = -1;
     private Button mGrowButton1,mGrowButton2,mSplitGrow1,mSplitGrow2;
-    private HorizontalScrollView mItemsScrollview,mItemsReviewScrollview;
+    private ItemHorizontalScrollView mItemsScrollview,mItemsReviewScrollview;
     private CheckBox mAutoChangeTimeCheckBox;
     private String[] soundList;
 
@@ -51,9 +52,13 @@ public class EditTimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.edit_main);
         mItemsLayout = (LinearLayout) this.findViewById(R.id.items_layout);
-        mItemsScrollview=(HorizontalScrollView) this.findViewById(R.id.items_scrollview);
+        mItemsScrollview=(ItemHorizontalScrollView) this.findViewById(R.id.items_scrollview);
         mItemsReviewLayout = (LinearLayout) this.findViewById(R.id.items_review_layout);
-        mItemsReviewScrollview=(HorizontalScrollView) this.findViewById(R.id.items_review_scrollview);
+        mItemsReviewScrollview=(ItemHorizontalScrollView) this.findViewById(R.id.items_review_scrollview);
+        
+        mItemsScrollview.setOnScrollChanged(mOnItemsScrollViewChanged);
+        mItemsReviewScrollview.setOnScrollChanged(mOnReviewItemsScrollViewChanged);
+        
         mSongNameEditText = (EditText) this.findViewById(R.id.song_name);
         mAutoChangeTimeCheckBox=(CheckBox) this.findViewById(R.id.auto_change_time);
         soundList = this.getResources().getStringArray(R.array.sound_list);
@@ -210,17 +215,82 @@ public class EditTimeActivity extends Activity {
         updateItemsTime(editItemView);
         scrollToEnd();
     }
+
+    private final int MSG_SCROLL_TO_END=1;
+    private final int MSG_SCROLL_TO_ITEM_POSITION=2;
+    private final int MSG_SCROLL_TO_REVIEW_ITEM_POSITION=3;
     
     private Handler mHandler=new Handler(){
+        private int lastIndex = -1;
         @Override
         public void handleMessage(Message msg) {
-            mItemsScrollview.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+            switch(msg.what){
+            case MSG_SCROLL_TO_END:
+                mItemsScrollview.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                break;
+            case MSG_SCROLL_TO_ITEM_POSITION:{
+                int scrollIndex = msg.arg1;
+                mItemsScrollview.smoothScrollTo(scrollIndex*EDIT_ITEM_WIDTH, 0);
+                break;}
+            case MSG_SCROLL_TO_REVIEW_ITEM_POSITION:{
+                int scrollIndex = msg.arg1;
+                int scrollX=((scrollIndex-3)*REVIEW_ITEM_WIDTH)+((scrollIndex-3)*(REVIEW_ITEM_MARGINS*2));
+                mItemsReviewScrollview.smoothScrollTo(scrollX, 0);
+                if(lastIndex!=-1){
+                    setFocusViewBackgroundToNormal(lastIndex);
+                    setFocusViewBackgroundToNormal(lastIndex+1);
+                    setFocusViewBackgroundToNormal(lastIndex+2);
+                }
+                setFocusViewBackgroundToFocus(scrollIndex);
+                setFocusViewBackgroundToFocus(scrollIndex+1);
+                setFocusViewBackgroundToFocus(scrollIndex+2);
+                lastIndex=scrollIndex;
+                break;}
+            default:
+                break;
+            }
+        }
+        
+        private void setFocusViewBackgroundToNormal(int index){
+            View lastView=((ViewGroup)mItemsReviewScrollview.getChildAt(0)).getChildAt(index);
+            if(lastView instanceof Button){
+                ((Button)lastView).setBackgroundResource(R.drawable.button_selector);
+            }
+        }
+
+        private void setFocusViewBackgroundToFocus(int index){
+            View lastView=((ViewGroup)mItemsReviewScrollview.getChildAt(0)).getChildAt(index);
+            if(lastView instanceof Button){
+                ((Button)lastView).setBackgroundResource(R.drawable.focus_button_selector);
+            }
+        }
+    };
+    
+    private ItemHorizontalScrollView.OnScrollChanged mOnItemsScrollViewChanged=new ItemHorizontalScrollView.OnScrollChanged(){
+        @Override
+        public void onScrollChanged(int l, int t, int oldl, int oldt) {
+            int scrollIndex = (l/EDIT_ITEM_WIDTH);
+            boolean bool=l%EDIT_ITEM_WIDTH>(EDIT_ITEM_WIDTH*(0.7));
+            if(bool){
+                scrollIndex+=1;
+            }
+            mHandler.removeMessages(MSG_SCROLL_TO_REVIEW_ITEM_POSITION);
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SCROLL_TO_REVIEW_ITEM_POSITION, scrollIndex, 0), 100);
+        }
+    };
+
+    private ItemHorizontalScrollView.OnScrollChanged mOnReviewItemsScrollViewChanged=new ItemHorizontalScrollView.OnScrollChanged(){
+        @Override
+        public void onScrollChanged(int l, int t, int oldl, int oldt) {
+//            int scrollIndex = ((l-REVIEW_ITEM_MARGINS)/(REVIEW_ITEM_WIDTH+REVIEW_ITEM_MARGINS));
+//            mHandler.removeMessages(MSG_SCROLL_TO_ITEM_POSITION);
+//            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_SCROLL_TO_ITEM_POSITION, scrollIndex, 0), 1000);
         }
     };
     
     private void scrollToEnd(){
-        mHandler.removeMessages(1);
-        mHandler.sendEmptyMessageDelayed(1, 100);
+        mHandler.removeMessages(MSG_SCROLL_TO_END);
+        mHandler.sendEmptyMessageDelayed(MSG_SCROLL_TO_END, 100);
     }
 
     private void updateItemsIndex() {
@@ -277,12 +347,15 @@ public class EditTimeActivity extends Activity {
         editItemView.setOnSoundChangedListener(mOnSoundChangedListener);
         return editItemView;
     }
+
+    private final int REVIEW_ITEM_WIDTH=100;
+    private final int REVIEW_ITEM_MARGINS=2;
     
     private void addItemReview(final int index){
         Button reviewItem=new Button(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(REVIEW_ITEM_WIDTH,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(2, 2, 2, 2);
+        params.setMargins(REVIEW_ITEM_MARGINS, REVIEW_ITEM_MARGINS, REVIEW_ITEM_MARGINS, REVIEW_ITEM_MARGINS);
         reviewItem.setLayoutParams(params);
         reviewItem.setText("0");
         reviewItem.setBackgroundResource(R.drawable.button_selector);

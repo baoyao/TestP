@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="自动改变后面的时间:" />
+                android:text="修改时自动改变之后的时间:" />
 
             <CheckBox
                 android:id="@+id/auto_change_time"
@@ -135,7 +135,7 @@
         android:layout_marginTop="5dp"
         android:background="#000000" />
     
-    <HorizontalScrollView
+    <com.example.testp.ItemHorizontalScrollView
         android:id="@+id/items_review_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
@@ -147,7 +147,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal" >
         </LinearLayout>
-    </HorizontalScrollView>
+    </com.example.testp.ItemHorizontalScrollView>
 
     <View
         android:layout_width="match_parent"
@@ -155,7 +155,7 @@
         android:layout_marginTop="3dp"
         android:background="#000000" />
     
-    <HorizontalScrollView
+    <com.example.testp.ItemHorizontalScrollView
         android:id="@+id/items_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -177,6 +177,6 @@
                 android:onClick="onAddButtonClick"
                 android:text="增加" />
         </LinearLayout>
-    </HorizontalScrollView>
+    </com.example.testp.ItemHorizontalScrollView>
 
 </LinearLayout>
