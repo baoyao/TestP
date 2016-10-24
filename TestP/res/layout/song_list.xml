@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/file_path"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -36,14 +36,21 @@
             android:id="@+id/comfirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/file_path"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/button_selector"
             android:gravity="center"
             android:onClick="onChooseButtonClick"
-            android:text="确定" />
+            android:visibility="gone"
+            android:text="播放此文件" />
     </RelativeLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="#000000"/>
 
     <ListView
         android:id="@+id/list"

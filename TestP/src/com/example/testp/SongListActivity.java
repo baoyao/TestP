@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +23,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * @author houen.bao
  * @date Oct 9, 2016 10:56:42 AM
@@ -34,6 +36,7 @@ public class SongListActivity extends Activity {
     private List<SongInfo> mSongList = new ArrayList<SongInfo>();
     private SongAdapter mSongAdapter;
     private TextView mFilePathTextView;
+    private Button comfirmButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class SongListActivity extends Activity {
         this.setContentView(R.layout.song_list);
 
         mFilePathTextView=(TextView) this.findViewById(R.id.file_path);
+        comfirmButton=(Button) this.findViewById(R.id.comfirm);
         
         File file = new File(SONG_PATH);
         if (!file.exists()) {
@@ -61,13 +65,17 @@ public class SongListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String soundJson = Utils.soundObjectParseToJson(mSongList.get(position).getSounds());
-                Intent intent = new Intent();
-                intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
-                intent.setClass(SongListActivity.this, MainActivity.class);
-                SongListActivity.this.setResult(RESULT_OK, intent);
-                SongListActivity.this.finish();
+                jumpToMainActivityAndPlay(soundJson);
             }
         });
+    }
+    
+    private void jumpToMainActivityAndPlay(String soundJson){
+    	Intent intent = new Intent();
+        intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
+        intent.setClass(SongListActivity.this, MainActivity.class);
+        SongListActivity.this.setResult(RESULT_OK, intent);
+        SongListActivity.this.finish();
     }
 
     public void onChooseButtonClick(View view) {
@@ -78,8 +86,14 @@ public class SongListActivity extends Activity {
             startActivityForResult(Intent.createChooser(intent, "请选择文件"),
                     0);
             break;}
-        case R.id.comfirm:
-            break;
+        case R.id.comfirm:{
+        	if(mFilePathTextView.getTag()!=null){
+        		String soundJson=readTxtFile(new File(mFilePathTextView.getTag().toString()));
+        		jumpToMainActivityAndPlay(soundJson);
+        	}else{
+        		Toast.makeText(this, "请选择歌曲文件", Toast.LENGTH_SHORT).show();
+        	}
+            break;}
         default:
             break;
         }
@@ -94,9 +108,30 @@ public class SongListActivity extends Activity {
                 reload();
             }
             Uri uri = data.getData();
+            if(uri==null){
+            	return;
+            }
+            File file=new File(uri.getPath());
+            if(!file.exists()){
+            	return;
+            }
+            try {
+            	new Gson().fromJson(readTxtFile(file), new TypeToken<List<SoundInfo>>() {
+            	}.getType());
+            	comfirmButton.setVisibility(View.VISIBLE);
+            	String path=uri.getPath();
+            	mFilePathTextView.setText(path.length()>40?path.substring(0, 40):path);
+            	mFilePathTextView.setTag(uri.getPath());
+			} catch (Exception e) {
+            	Toast.makeText(this, "您选择的不是歌曲文件", Toast.LENGTH_LONG).show();
+            	mFilePathTextView.setText("");
+            	mFilePathTextView.setTag(null);
+            	comfirmButton.setVisibility(View.GONE);
+				return;
+			}
         }
     }
-
+    
     @Override
     protected void onResume() {
         super.onResume();

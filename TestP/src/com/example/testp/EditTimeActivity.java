@@ -336,7 +336,7 @@ public class EditTimeActivity extends Activity {
         editItemView.setOnAddListener(new OnAddListener() {
             @Override
             public void onClick(int index, View v) {
-                EditItemView subEditItemView = createEditView(index);
+                EditItemView subEditItemView = createEditView(index+1);
                 mItemsLayout.addView(subEditItemView, index);
                 updateItemsIndex();
                 updateItemsTime(subEditItemView);
