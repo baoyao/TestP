@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -409,14 +410,17 @@ public class EditTimeActivity extends Activity {
             }
 
             String soundJson = Utils.soundObjectParseToJson(list);
-
-            makeNewFile(songName);
-            File file = new File(SONG_PATH + "/" + songName + ".txt");
+            
+            String filePath=SONG_PATH + "/" + songName + ".song";
+            makeNewFile(filePath);
+            File file = new File(filePath);
             boolean write = writeTxtFile(soundJson, file);
 
             if (!write) {
                 return;
             }
+            
+            this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
             Intent intent = new Intent();
             intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
@@ -435,13 +439,13 @@ public class EditTimeActivity extends Activity {
 
     private final String SONG_PATH = PublicConfig.SONG_PATH;
 
-    private File makeNewFile(String fileName) {
+    private File makeNewFile(String filePath) {
         File dir = new File(SONG_PATH);
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        File file = new File(SONG_PATH + "/" + fileName + ".txt");
+        File file = new File(filePath);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -452,11 +456,11 @@ public class EditTimeActivity extends Activity {
         return file;
     }
 
-    private boolean writeTxtFile(String content, File fileName) {
+    private boolean writeTxtFile(String content, File file) {
         boolean flag = false;
         FileOutputStream o = null;
         try {
-            o = new FileOutputStream(fileName);
+            o = new FileOutputStream(file);
             o.write(content.getBytes("UTF-8"));
             flag = true;
         } catch (Exception e) {

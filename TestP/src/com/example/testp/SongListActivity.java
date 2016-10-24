@@ -9,7 +9,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,21 +31,24 @@ import android.widget.Toast;
 public class SongListActivity extends Activity {
 
     private final String SONG_PATH = PublicConfig.SONG_PATH;
-    private List<List<SoundInfo>> mSoundList = new ArrayList<List<SoundInfo>>();
-    private String[] songs;
+    private List<SongInfo> mSongList = new ArrayList<SongInfo>();
     private SongAdapter mSongAdapter;
+    private TextView mFilePathTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.song_list);
+
+        mFilePathTextView=(TextView) this.findViewById(R.id.file_path);
+        
         File file = new File(SONG_PATH);
         if (!file.exists()) {
             file.mkdirs();
             return;
         }
 
-        songs = file.list();
+        String[] songs = file.list();
         if (songs == null || songs.length == 0) {
             return;
         } else {
@@ -55,7 +60,7 @@ public class SongListActivity extends Activity {
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String soundJson = Utils.soundObjectParseToJson(mSoundList.get(position));
+                String soundJson = Utils.soundObjectParseToJson(mSongList.get(position).getSounds());
                 Intent intent = new Intent();
                 intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
                 intent.setClass(SongListActivity.this, MainActivity.class);
@@ -63,6 +68,21 @@ public class SongListActivity extends Activity {
                 SongListActivity.this.finish();
             }
         });
+    }
+
+    public void onChooseButtonClick(View view) {
+        switch (view.getId()) {
+        case R.id.choose_file:{
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            startActivityForResult(Intent.createChooser(intent, "请选择文件"),
+                    0);
+            break;}
+        case R.id.comfirm:
+            break;
+        default:
+            break;
+        }
     }
 
     @Override
@@ -73,6 +93,7 @@ public class SongListActivity extends Activity {
             if (soundJson != null) {
                 reload();
             }
+            Uri uri = data.getData();
         }
     }
 
@@ -85,7 +106,7 @@ public class SongListActivity extends Activity {
             return;
         }
 
-        songs = file.list();
+        String[] songs = file.list();
         if (songs == null || songs.length == 0) {
             return;
         }
@@ -93,9 +114,9 @@ public class SongListActivity extends Activity {
     }
 
     private void reload() {
-        mSoundList.clear();
+        mSongList.clear();
         File file = new File(SONG_PATH);
-        songs = file.list();
+        String[] songs = file.list();
         if (songs == null || songs.length == 0) {
             mSongAdapter.notifyDataSetChanged();
         } else {
@@ -109,13 +130,13 @@ public class SongListActivity extends Activity {
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return mSoundList.size();
+            return mSongList.size();
         }
 
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return mSoundList.get(position);
+            return mSongList.get(position);
         }
 
         @Override
@@ -138,11 +159,12 @@ public class SongListActivity extends Activity {
                 holder.delete.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        File file = new File(SONG_PATH + "/" + songs[position]);
+                        File file = new File(mSongList.get(position).getPath());
                         file.delete();
-                        Toast.makeText(SongListActivity.this, "Delete " + songs[position] + " success",
+                        Toast.makeText(SongListActivity.this, "Delete " + mSongList.get(position).getName() + " success",
                                 Toast.LENGTH_SHORT).show();
                         reload();
+                        SongListActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
                     }
                 });
                 holder.edit.setOnClickListener(new OnClickListener() {
@@ -150,10 +172,9 @@ public class SongListActivity extends Activity {
                     public void onClick(View v) {
                         Intent intent = new Intent(SongListActivity.this, EditTimeActivity.class);
                         intent.putExtra(Constants.EXT_SOUND_DATA,
-                                Utils.soundObjectParseToJson(mSoundList.get(position)));
+                                Utils.soundObjectParseToJson(mSongList.get(position).getSounds()));
                         intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
-                        intent.putExtra(Constants.EXT_SONG_NAME,
-                                songs[position].substring(0, songs[position].lastIndexOf(".")));
+                        intent.putExtra(Constants.EXT_SONG_NAME,mSongList.get(position).getName());
                         startActivityForResult(intent, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
                     }
                 });
@@ -161,8 +182,8 @@ public class SongListActivity extends Activity {
             } else {
                 holder = (Holder) convertView.getTag();
             }
-            holder.name.setText(songs[position].substring(0, songs[position].lastIndexOf(".")));
-            holder.count.setText(mSoundList.get(position).size() + "");
+            holder.name.setText(mSongList.get(position).getName());
+            holder.count.setText(mSongList.get(position).getSounds().size() + "");
             return convertView;
         }
 
@@ -176,10 +197,14 @@ public class SongListActivity extends Activity {
     private void fileToObject(String[] filelist) {
         try {
             for (int i = 0; i < filelist.length; i++) {
-                File file = new File(SONG_PATH + "/" + filelist[i]);
+                SongInfo info=new SongInfo();
+                info.setPath(SONG_PATH + "/" + filelist[i]);
+                File file = new File(info.getPath());
                 String fileContent = readTxtFile(file);
                 List<SoundInfo> list = Utils.jsonParseToSoundObject(fileContent);
-                mSoundList.add(list);
+                info.setSounds(list);
+                info.setName(filelist[i].substring(0, filelist[i].lastIndexOf(".")));
+                mSongList.add(info);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,6 +238,36 @@ public class SongListActivity extends Activity {
             }
         }
         return result;
+    }
+
+    class SongInfo {
+        private String name;
+        private String path;
+        private List<SoundInfo> sounds;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public List<SoundInfo> getSounds() {
+            return sounds;
+        }
+
+        public void setSounds(List<SoundInfo> sounds) {
+            this.sounds = sounds;
+        }
     }
 
 }

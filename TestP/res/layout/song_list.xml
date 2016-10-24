@@ -5,10 +5,51 @@
     android:background="#ffffff"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" >
+
+        <Button
+            android:id="@+id/choose_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:onClick="onChooseButtonClick"
+            android:text="选择文件" />
+
+        <TextView
+            android:id="@+id/file_path"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toRightOf="@id/choose_file"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="" />
+
+        <Button
+            android:id="@+id/comfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:onClick="onChooseButtonClick"
+            android:text="确定" />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp" >
     </ListView>
 
 </LinearLayout>
