@@ -1,5 +1,6 @@
 package com.example.testp;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +19,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.testp.KeyButton.OnTouchDownListener;
 import com.example.testp.RhythmController.TimeRecord;
@@ -42,6 +44,16 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent it=this.getIntent();
+        final Uri uri=it.getData();
+        if(uri!=null){
+            mSongJson=Utils.isSongFile(uri.getPath());
+            if(mSongJson==null){
+                Toast.makeText(this, "您选择的不是歌曲文件", Toast.LENGTH_LONG).show();
+                this.finish();
+                return;
+            }
+        }
         final LinearLayout mWhiteLayout = (LinearLayout) this.findViewById(R.id.white_layout);
         final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
         
@@ -135,6 +147,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 }
                 mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,keyButtonList);
                 dismissDialog();
+                if(mSongJson != null){
+                    mSoundPlayer.play(mSongJson);
+                }
             }
 
             @Override
@@ -144,6 +159,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 setDialogProgress(values[0]);
             }
         }.execute(null, null);
+
     }
     
     private OnSeekBarChangeListener mOnSeekBarChangeListener=new OnSeekBarChangeListener(){
@@ -407,7 +423,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        mSoundPool.release();
+        if(mSoundPool!=null){
+            mSoundPool.release();
+        }
     }
 
 }

@@ -1,5 +1,9 @@
 package com.example.testp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
@@ -66,7 +70,45 @@ public class Utils {
         }
         return times;
     }
+
+    public static String readTxtFile(File fileName) {
+        String result = "";
+        FileReader fileReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            fileReader = new FileReader(fileName);
+            bufferedReader = new BufferedReader(fileReader);
+            String read = "";
+            while ((read = bufferedReader.readLine()) != null) {
+                result = result + read + "\n";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+                if (fileReader != null) {
+                    fileReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
     
+    public static String isSongFile(String filePath){
+        try {
+            String songStr=readTxtFile(new File(filePath));
+            new Gson().fromJson(songStr, new TypeToken<List<SoundInfo>>() {
+            }.getType());
+            return songStr;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     private static final String SHARED_PREFERENCES_NAME = "shared_preferences";
 

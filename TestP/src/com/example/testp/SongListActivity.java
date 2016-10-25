@@ -43,9 +43,9 @@ public class SongListActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.song_list);
 
-        mFilePathTextView=(TextView) this.findViewById(R.id.file_path);
-        comfirmButton=(Button) this.findViewById(R.id.comfirm);
-        
+        mFilePathTextView = (TextView) this.findViewById(R.id.file_path);
+        comfirmButton = (Button) this.findViewById(R.id.comfirm);
+
         File file = new File(SONG_PATH);
         if (!file.exists()) {
             file.mkdirs();
@@ -69,9 +69,9 @@ public class SongListActivity extends Activity {
             }
         });
     }
-    
-    private void jumpToMainActivityAndPlay(String soundJson){
-    	Intent intent = new Intent();
+
+    private void jumpToMainActivityAndPlay(String soundJson) {
+        Intent intent = new Intent();
         intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
         intent.setClass(SongListActivity.this, MainActivity.class);
         SongListActivity.this.setResult(RESULT_OK, intent);
@@ -80,20 +80,20 @@ public class SongListActivity extends Activity {
 
     public void onChooseButtonClick(View view) {
         switch (view.getId()) {
-        case R.id.choose_file:{
+        case R.id.choose_file: {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("*/*");
-            startActivityForResult(Intent.createChooser(intent, "请选择文件"),
-                    0);
-            break;}
-        case R.id.comfirm:{
-        	if(mFilePathTextView.getTag()!=null){
-        		String soundJson=readTxtFile(new File(mFilePathTextView.getTag().toString()));
-        		jumpToMainActivityAndPlay(soundJson);
-        	}else{
-        		Toast.makeText(this, "请选择歌曲文件", Toast.LENGTH_SHORT).show();
-        	}
-            break;}
+            startActivityForResult(Intent.createChooser(intent, "请选择文件"), 0);
+            break;
+        }
+        case R.id.comfirm: {
+            if (mFilePathTextView.getTag() != null) {
+                jumpToMainActivityAndPlay(mFilePathTextView.getTag().toString());
+            } else {
+                Toast.makeText(this, "请选择歌曲文件", Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
         default:
             break;
         }
@@ -106,32 +106,27 @@ public class SongListActivity extends Activity {
             String soundJson = data.getStringExtra(Constants.EXT_SOUND_DATA);
             if (soundJson != null) {
                 reload();
+                return;
             }
             Uri uri = data.getData();
-            if(uri==null){
-            	return;
+            if (uri == null) {
+                return;
             }
-            File file=new File(uri.getPath());
-            if(!file.exists()){
-            	return;
+            soundJson = Utils.isSongFile(uri.getPath());
+            if (soundJson != null) {
+                comfirmButton.setVisibility(View.VISIBLE);
+                String path = uri.getPath();
+                mFilePathTextView.setText(path.length() > 40 ? path.substring(0, 40) : path);
+                mFilePathTextView.setTag(soundJson);
+            } else {
+                Toast.makeText(this, "您选择的不是歌曲文件", Toast.LENGTH_LONG).show();
+                mFilePathTextView.setText("");
+                mFilePathTextView.setTag(null);
+                comfirmButton.setVisibility(View.GONE);
             }
-            try {
-            	new Gson().fromJson(readTxtFile(file), new TypeToken<List<SoundInfo>>() {
-            	}.getType());
-            	comfirmButton.setVisibility(View.VISIBLE);
-            	String path=uri.getPath();
-            	mFilePathTextView.setText(path.length()>40?path.substring(0, 40):path);
-            	mFilePathTextView.setTag(uri.getPath());
-			} catch (Exception e) {
-            	Toast.makeText(this, "您选择的不是歌曲文件", Toast.LENGTH_LONG).show();
-            	mFilePathTextView.setText("");
-            	mFilePathTextView.setTag(null);
-            	comfirmButton.setVisibility(View.GONE);
-				return;
-			}
         }
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -191,15 +186,17 @@ public class SongListActivity extends Activity {
                 holder.count = (TextView) convertView.findViewById(R.id.count);
                 holder.delete = (Button) convertView.findViewById(R.id.delete);
                 holder.edit = (Button) convertView.findViewById(R.id.edit);
+                holder.share = (Button) convertView.findViewById(R.id.share);
                 holder.delete.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         File file = new File(mSongList.get(position).getPath());
                         file.delete();
-                        Toast.makeText(SongListActivity.this, "Delete " + mSongList.get(position).getName() + " success",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SongListActivity.this,
+                                "Delete " + mSongList.get(position).getName() + " success", Toast.LENGTH_SHORT).show();
                         reload();
-                        SongListActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+                        SongListActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri
+                                .fromFile(file)));
                     }
                 });
                 holder.edit.setOnClickListener(new OnClickListener() {
@@ -209,8 +206,17 @@ public class SongListActivity extends Activity {
                         intent.putExtra(Constants.EXT_SOUND_DATA,
                                 Utils.soundObjectParseToJson(mSongList.get(position).getSounds()));
                         intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
-                        intent.putExtra(Constants.EXT_SONG_NAME,mSongList.get(position).getName());
+                        intent.putExtra(Constants.EXT_SONG_NAME, mSongList.get(position).getName());
                         startActivityForResult(intent, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);
+                    }
+                });
+                holder.share.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Uri uri = Uri.parse("file:/" + mSongList.get(position).getPath());
+                        intent.setDataAndType(uri, "text/plain");
+                        startActivity(intent);
                     }
                 });
                 convertView.setTag(holder);
@@ -224,7 +230,7 @@ public class SongListActivity extends Activity {
 
         class Holder {
             TextView name, count;
-            Button delete, edit;
+            Button delete, edit, share;
         }
 
     }
@@ -232,10 +238,10 @@ public class SongListActivity extends Activity {
     private void fileToObject(String[] filelist) {
         try {
             for (int i = 0; i < filelist.length; i++) {
-                SongInfo info=new SongInfo();
+                SongInfo info = new SongInfo();
                 info.setPath(SONG_PATH + "/" + filelist[i]);
                 File file = new File(info.getPath());
-                String fileContent = readTxtFile(file);
+                String fileContent = Utils.readTxtFile(file);
                 List<SoundInfo> list = Utils.jsonParseToSoundObject(fileContent);
                 info.setSounds(list);
                 info.setName(filelist[i].substring(0, filelist[i].lastIndexOf(".")));
@@ -245,34 +251,6 @@ public class SongListActivity extends Activity {
             e.printStackTrace();
             Toast.makeText(this, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private String readTxtFile(File fileName) {
-        String result = "";
-        FileReader fileReader = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fileReader = new FileReader(fileName);
-            bufferedReader = new BufferedReader(fileReader);
-            String read = "";
-            while ((read = bufferedReader.readLine()) != null) {
-                result = result + read + "\n";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-                if (fileReader != null) {
-                    fileReader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
     }
 
     class SongInfo {

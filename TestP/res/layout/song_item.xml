@@ -20,14 +20,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/name_dsc" />
-
+        
         <Button
-            android:id="@+id/delete"
+            android:id="@+id/share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
+            android:background="@drawable/button_selector"
+            android:focusable="false"
+            android:text="分享" />
+        
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@id/share"
             android:background="@drawable/button_selector"
             android:focusable="false"
             android:text="删除" />

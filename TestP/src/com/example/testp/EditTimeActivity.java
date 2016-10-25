@@ -411,7 +411,7 @@ public class EditTimeActivity extends Activity {
 
             String soundJson = Utils.soundObjectParseToJson(list);
             
-            String filePath=SONG_PATH + "/" + songName + ".song";
+            String filePath=SONG_PATH + "/" + songName + ".txt";
             makeNewFile(filePath);
             File file = new File(filePath);
             boolean write = writeTxtFile(soundJson, file);
