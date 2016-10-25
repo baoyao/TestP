@@ -64,8 +64,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#33ffffff"
+        android:background="@drawable/button_selector"
         android:gravity="center"
+        android:layout_marginLeft="1dp"
         android:onClick="onMoreButtonClick"
         android:text=" . . . " />
 
@@ -86,7 +87,7 @@
                 android:id="@+id/jump_to_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
+                android:layout_marginLeft="42dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
                 android:text="编辑歌曲" />
