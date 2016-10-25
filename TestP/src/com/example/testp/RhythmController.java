@@ -9,9 +9,11 @@ import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -26,6 +28,7 @@ public class RhythmController {
     private SoundPool mSoundPool;
     private HorizontalScrollView mScrollview;
     private int mRhythmViewEndLine=PublicConfig.RHYTHM_VIEW_END_LINE;
+    private String[] mSoundStr;
 
     public RhythmController(Context context, SoundPool soundPool, List<KeyButton> keyButtonList) {
         mContext = context;
@@ -36,6 +39,7 @@ public class RhythmController {
         mRhythmLayout.removeAllViews();
         buildRhythmItem();
         mRhythmViewEndLine = mRhythmLayout.getHeight();
+        mSoundStr=mContext.getResources().getStringArray(R.array.sound_list);
     }
 
     // 120-80=40
@@ -106,15 +110,15 @@ public class RhythmController {
         return getEndKeyNum(count - 12);
     }
 
-    private ImageView buildRhythmView(int soundId) {
-        ImageView rhythmView = new ImageView(mContext);
-        rhythmView.setBackgroundResource(R.drawable.white_note_hd);
+    private View buildRhythmView(int soundId) {
+        View rhythmView=LayoutInflater.from(mContext).inflate(R.layout.rhythm_item, null);
         FrameLayout.LayoutParams subParams = new FrameLayout.LayoutParams(PublicConfig.RHYTHM_VIEW_WIDTH,
                 PublicConfig.RHYTHM_VIEW_HEIGTH);
         int leftMargin=mKeyButtonList.get(soundId-1).getRhythmViewLeftMargin();
         subParams.setMargins(leftMargin, 0, 0, 0);
         rhythmView.setLayoutParams(subParams);
         rhythmView.setTag(soundId+"");
+        ((TextView)rhythmView.findViewById(R.id.sound)).setText(mSoundStr[soundId]);
         return rhythmView;
     }
 
@@ -159,7 +163,7 @@ public class RhythmController {
     
     public void refreshRhythView(){
         for (int i = 0; i < mRhythmLayout.getChildCount(); i++) {
-            ImageView rhythmView = (ImageView) mRhythmLayout.getChildAt(i);
+            View rhythmView = mRhythmLayout.getChildAt(i);
             FrameLayout.LayoutParams params = (android.widget.FrameLayout.LayoutParams) rhythmView
                     .getLayoutParams();
             params.setMargins(params.leftMargin, params.topMargin + DOWN_SPEED, params.rightMargin, params.bottomMargin);

@@ -16,7 +16,7 @@ public class PublicConfig {
     public static final int WHITE_KEY_WIDTH = 2 * 60;
     public static final int WHITE_KEY_LEFT_MARGIN = 1;
 
-    public static final int RHYTHM_VIEW_HEIGTH=20;//音符控件高度
+    public static final int RHYTHM_VIEW_HEIGTH=40;//音符控件高度
     public static final int RHYTHM_VIEW_WIDTH=WHITE_KEY_WIDTH-BLACK_KEY_WIDTH;//音符控件高度
     public static final int RHYTHM_VIEW_ANIM_SPEED=2;//音符控件掉下的速度
     public static final int RHYTHM_VIEW_END_LINE=440;//音符控件掉下的最低位置
