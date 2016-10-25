@@ -313,8 +313,8 @@ public class EditTimeActivity extends Activity {
         }
     }
 
-    private final int EDIT_ITEM_WIDTH = 480;
-    private final int EDIT_ITEM_HEIGHT = 400;
+    private final int EDIT_ITEM_WIDTH = 400;
+    private final int EDIT_ITEM_HEIGHT = 280;
     private final int EDIT_ITEM_PADDING = 5;
     
     private EditItemView createEditView(int index) {

@@ -1,10 +1,8 @@
 package com.example.testp;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,7 +20,6 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
 import com.example.testp.KeyButton.OnTouchDownListener;
 import com.example.testp.RhythmController.TimeRecord;
 
@@ -148,7 +145,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,keyButtonList);
                 dismissDialog();
                 if(mSongJson != null){
-                    mSoundPlayer.play(mSongJson);
+                    play();
                 }
             }
 
@@ -342,10 +339,16 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
             mSongJson=data.getStringExtra(Constants.EXT_SOUND_DATA);
-            if(mSongJson!=null && mSoundPlayer!=null){
-                mSoundPlayer.play(mSongJson);
-                ((Button)this.findViewById(R.id.pause_resume)).setText("暂停播放");
+            if(mSongJson!=null){
+                play();
             }
+        }
+    }
+    
+    private void play(){
+        if(mSoundPlayer != null){
+            mSoundPlayer.play(mSongJson);
+            ((Button)this.findViewById(R.id.pause_resume)).setText("暂停播放");
         }
     }
 
@@ -358,7 +361,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             break;
         case R.id.play:
             if(mSoundPlayer!=null && mSongJson!=null){
-                mSoundPlayer.play(mSongJson);
+                play();
             }
             break;
         case R.id.pause_resume:

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * @author houen.bao
@@ -24,6 +25,7 @@ public class RhythmController {
     private List<KeyButton> mKeyButtonList;
     private SoundPool mSoundPool;
     private HorizontalScrollView mScrollview;
+    private int mRhythmViewEndLine=PublicConfig.RHYTHM_VIEW_END_LINE;
 
     public RhythmController(Context context, SoundPool soundPool, List<KeyButton> keyButtonList) {
         mContext = context;
@@ -33,6 +35,7 @@ public class RhythmController {
         mScrollview=(HorizontalScrollView) ((Activity) context).findViewById(R.id.scrollview);
         mRhythmLayout.removeAllViews();
         buildRhythmItem();
+        mRhythmViewEndLine = mRhythmLayout.getHeight();
     }
 
     // 120-80=40
@@ -161,7 +164,7 @@ public class RhythmController {
                     .getLayoutParams();
             params.setMargins(params.leftMargin, params.topMargin + DOWN_SPEED, params.rightMargin, params.bottomMargin);
             rhythmView.setLayoutParams(params);
-            if (params.topMargin >= PublicConfig.RHYTHM_VIEW_END_LINE) {
+            if (params.topMargin >= mRhythmViewEndLine) {
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 if(!Utils.getConfiguration(mContext, Constants.KEY_MUTE, false)){
                     mSoundPool.play(soundId, 1, 1, 0, 0, 1);
@@ -169,7 +172,7 @@ public class RhythmController {
                 mRhythmLayout.removeViewAt(i);
                 recordEndLog(soundId);
             }
-            if(params.topMargin == (PublicConfig.RHYTHM_VIEW_END_LINE-(DOWN_SPEED*50))){
+            if(params.topMargin == (mRhythmViewEndLine-(DOWN_SPEED*50))){
                 int soundId=Integer.parseInt(rhythmView.getTag().toString());
                 smoothToDownView(soundId);
                 recordPreTime(soundId);

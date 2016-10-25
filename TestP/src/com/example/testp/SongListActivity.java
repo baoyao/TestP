@@ -74,8 +74,8 @@ public class SongListActivity extends Activity {
         Intent intent = new Intent();
         intent.putExtra(Constants.EXT_SOUND_DATA, soundJson);
         intent.setClass(SongListActivity.this, MainActivity.class);
-        SongListActivity.this.setResult(RESULT_OK, intent);
-        SongListActivity.this.finish();
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     public void onChooseButtonClick(View view) {
