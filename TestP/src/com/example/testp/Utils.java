@@ -9,6 +9,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.DisplayMetrics;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -131,6 +132,14 @@ public class Utils {
                 SHARED_PREFERENCES_NAME, Context.MODE_WORLD_WRITEABLE);
         boolean value = preferences.getBoolean(key, defaultValue);
         return value;
+    }
+    
+    public static int[] getScreenSize(Context context){
+        DisplayMetrics dm =context.getResources().getDisplayMetrics();
+        int w = dm.widthPixels;
+        int h = dm.heightPixels;
+        int d = dm.densityDpi;
+        return new int[]{w,h,d};
     }
 
 }

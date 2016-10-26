@@ -60,6 +60,9 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         mSpeedValaue=(TextView) this.findViewById(R.id.speed_vlaue);
         mSpeedController.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
         
+        int[] screenSize=Utils.getScreenSize(this);
+        ((TextView)this.findViewById(R.id.pf)).setText(screenSize[0]+"x"+screenSize[1]+" | "+screenSize[2]);
+        
         createDialog();
         setDialogMaxProgress(MAX_SOUNDS);
 

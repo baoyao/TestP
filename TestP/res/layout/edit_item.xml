@@ -71,8 +71,8 @@
 
                     <Button
                         android:id="@+id/time1"
-                        android:layout_width="@dimen/times_spinner_width"
-                        android:layout_height="@dimen/times_spinner_height"
+                        android:layout_width="@dimen/base_dimen_70"
+                        android:layout_height="@dimen/base_dimen_50"
                         android:layout_marginLeft="5dp"
                         android:background="@drawable/button_selector"
                         android:text="00" />
@@ -84,8 +84,8 @@
 
                     <Button
                         android:id="@+id/time2"
-                        android:layout_width="@dimen/times_spinner_width"
-                        android:layout_height="@dimen/times_spinner_height"
+                        android:layout_width="@dimen/base_dimen_70"
+                        android:layout_height="@dimen/base_dimen_50"
                         android:background="@drawable/button_selector"
                         android:text="00" />
 
@@ -96,8 +96,8 @@
 
                     <Button
                         android:id="@+id/time3"
-                        android:layout_width="@dimen/times_spinner_width"
-                        android:layout_height="@dimen/times_spinner_height"
+                        android:layout_width="@dimen/base_dimen_70"
+                        android:layout_height="@dimen/base_dimen_50"
                         android:background="@drawable/button_selector"
                         android:text="00" />
                 </LinearLayout>
