@@ -61,9 +61,9 @@ public class EditTimeActivity extends Activity {
         mItemsReviewLayout = (LinearLayout) this.findViewById(R.id.items_review_layout);
         mItemsReviewScrollview=(ItemHorizontalScrollView) this.findViewById(R.id.items_review_scrollview);
 
-        EDIT_ITEM_WIDTH=(int) this.getResources().getDimension(R.dimen.base_dimen_400);
-        EDIT_ITEM_HEIGHT=(int) this.getResources().getDimension(R.dimen.base_dimen_350);
-        EDIT_ITEM_PADDING=(int) this.getResources().getDimension(R.dimen.base_dimen_5);
+        EDIT_ITEM_WIDTH=(int) this.getResources().getDimension(R.dimen.px400);
+        EDIT_ITEM_HEIGHT=(int) this.getResources().getDimension(R.dimen.px350);
+        EDIT_ITEM_PADDING=(int) this.getResources().getDimension(R.dimen.px5);
         
         mItemsScrollview.setOnScrollChanged(mOnItemsScrollViewChanged);
         mItemsReviewScrollview.setOnScrollChanged(mOnReviewItemsScrollViewChanged);
