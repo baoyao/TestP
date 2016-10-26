@@ -47,6 +47,10 @@ public class EditTimeActivity extends Activity {
     private CheckBox mAutoChangeTimeCheckBox;
     private String[] soundList;
 
+    private int EDIT_ITEM_WIDTH = 400;
+    private int EDIT_ITEM_HEIGHT = 280;
+    private int EDIT_ITEM_PADDING = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -56,6 +60,12 @@ public class EditTimeActivity extends Activity {
         mItemsScrollview=(ItemHorizontalScrollView) this.findViewById(R.id.items_scrollview);
         mItemsReviewLayout = (LinearLayout) this.findViewById(R.id.items_review_layout);
         mItemsReviewScrollview=(ItemHorizontalScrollView) this.findViewById(R.id.items_review_scrollview);
+
+        EDIT_ITEM_WIDTH=(int) this.getResources().getDimension(R.dimen.edit_item_width);
+        EDIT_ITEM_HEIGHT=(int) this.getResources().getDimension(R.dimen.edit_item_height);
+        EDIT_ITEM_PADDING=(int) this.getResources().getDimension(R.dimen.edit_item_padding);
+        
+        Log.v("tt","w: "+EDIT_ITEM_WIDTH+" h: "+EDIT_ITEM_HEIGHT+" p: "+EDIT_ITEM_PADDING);
         
         mItemsScrollview.setOnScrollChanged(mOnItemsScrollViewChanged);
         mItemsReviewScrollview.setOnScrollChanged(mOnReviewItemsScrollViewChanged);
@@ -312,10 +322,6 @@ public class EditTimeActivity extends Activity {
             ((EditItemView) mItemsLayout.getChildAt(index - 1)).setTime(time);
         }
     }
-
-    private final int EDIT_ITEM_WIDTH = 400;
-    private final int EDIT_ITEM_HEIGHT = 280;
-    private final int EDIT_ITEM_PADDING = 5;
     
     private EditItemView createEditView(int index) {
         EditItemView editItemView = (EditItemView) LayoutInflater.from(this).inflate(R.layout.edit_item, null);
