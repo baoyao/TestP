@@ -358,7 +358,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     public void onControlButtonClick(View view) {
         switch (view.getId()) {
         case R.id.jump_to_edit:
-            Intent intent=new Intent(MainActivity.this, EditTimeActivity.class);
+            Intent intent=new Intent(MainActivity.this, EditSongActivity.class);
             intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.MAIN_ACTIVITY_REQUEST_CODE);
             startActivityForResult(intent, Constants.MAIN_ACTIVITY_REQUEST_CODE);
             break;

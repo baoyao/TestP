@@ -202,7 +202,7 @@ public class SongListActivity extends Activity {
                 holder.edit.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(SongListActivity.this, EditTimeActivity.class);
+                        Intent intent = new Intent(SongListActivity.this, EditSongActivity.class);
                         intent.putExtra(Constants.EXT_SOUND_DATA,
                                 Utils.soundObjectParseToJson(mSongList.get(position).getSounds()));
                         intent.putExtra(Constants.EXT_REQUEST_CODE, Constants.SONG_LIST_ACTIVITY_REQUEST_CODE);

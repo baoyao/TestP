@@ -37,7 +37,7 @@ import com.example.testp.GeneralPopupKeypad.OnKeypadItemClickListener;
  * @author houen.bao
  * @date Sep 23, 2016 5:52:01 PM
  */
-public class EditTimeActivity extends Activity {
+public class EditSongActivity extends Activity {
 
     private LinearLayout mItemsLayout,mItemsReviewLayout;
     private EditText mSongNameEditText;
@@ -103,7 +103,7 @@ public class EditTimeActivity extends Activity {
         mAutoChangeTimeCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Utils.saveConfiguration(EditTimeActivity.this, Constants.KEY_AUTO_CHANGE_TIME, isChecked);
+                Utils.saveConfiguration(EditSongActivity.this, Constants.KEY_AUTO_CHANGE_TIME, isChecked);
             }
         });
     }
@@ -194,7 +194,7 @@ public class EditTimeActivity extends Activity {
                         long time1 = Utils.parseTime(tempItemView.getTime());
                         long time2 = Utils.parseTime(itemView.getTime());
                         
-                        if (Utils.getConfiguration(EditTimeActivity.this, Constants.KEY_AUTO_CHANGE_TIME, true)) {
+                        if (Utils.getConfiguration(EditSongActivity.this, Constants.KEY_AUTO_CHANGE_TIME, true)) {
                             long parseTime = Utils.parseTime(tempItemView.getTime()) + changedTime;
                             tempItemView.setTime(Utils.parseTime(parseTime));
                         }
@@ -212,7 +212,7 @@ public class EditTimeActivity extends Activity {
                         str += "/";
                     }
                 }
-                Toast.makeText(EditTimeActivity.this, "第" + str + "个的时间小于前面的！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditSongActivity.this, "第" + str + "个的时间小于前面的！", Toast.LENGTH_SHORT).show();
             }
         }
     };
