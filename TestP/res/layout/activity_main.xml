@@ -163,6 +163,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0" />
+            
+            <Button
+                android:id="@+id/switch_sounds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/button_selector"
+                android:onClick="onControlButtonClick"
+                android:text="极品钢琴键音" />
         </LinearLayout>
     </LinearLayout>
     <RelativeLayout 

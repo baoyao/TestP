@@ -36,6 +36,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private ResultLayout mResult;
     private SeekBar mSpeedController;
     private TextView mSpeedValaue;
+    private LinearLayout mWhiteLayout, mBlackLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 return;
             }
         }
-        final LinearLayout mWhiteLayout = (LinearLayout) this.findViewById(R.id.white_layout);
-        final LinearLayout mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
+        mWhiteLayout = (LinearLayout) this.findViewById(R.id.white_layout);
+        mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
         ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this,Constants.KEY_MUTE, false)?"打开弹奏音":"关闭弹奏音");
@@ -63,6 +64,19 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         int[] screenSize=Utils.getScreenSize(this);
         ((TextView)this.findViewById(R.id.pf)).setText(screenSize[0]+"x"+screenSize[1]+" | "+screenSize[2]);
         
+        Button switchKeyButton=(Button) this.findViewById(R.id.switch_sounds);
+        if(Utils.getConfiguration(this, Constants.KEY_IS_JP, false)){
+            switchKeyButton.setText("极品钢琴键音");
+        }else{
+            switchKeyButton.setText("真实钢琴键音");
+        }
+        
+        loadSoundPool();
+    }
+    
+    private void loadSoundPool(){
+        mWhiteLayout.removeAllViews();
+        mBlackLayout.removeAllViews();
         createDialog();
         setDialogMaxProgress(MAX_SOUNDS);
 
@@ -70,7 +84,16 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
 
         new AsyncTask<Object, Integer, Integer>() {
-
+            String soundDir = "sound";
+            
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                if(Utils.getConfiguration(MainActivity.this, Constants.KEY_IS_JP, false)){
+                    soundDir = "sound_jp";
+                }
+            }
+            
             @Override
             protected Integer doInBackground(Object... params) {
                 // TODO Auto-generated method stub
@@ -84,7 +107,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             }
 
             private void loadAssetSounds() throws IOException {
-                String soundDir = "sound";
+                
                 String[] mSounds = mAssetManager.list(soundDir);
                 int sCount = mSounds.length;
                 // sort
@@ -114,12 +137,6 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                         break;
                     }
                 }
-            }
-
-            @Override
-            protected void onPreExecute() {
-                // TODO Auto-generated method stub
-                super.onPreExecute();
             }
 
             @Override
@@ -159,7 +176,6 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 setDialogProgress(values[0]);
             }
         }.execute(null, null);
-
     }
     
     private OnSeekBarChangeListener mOnSeekBarChangeListener=new OnSeekBarChangeListener(){
@@ -394,6 +410,25 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 ((Button)view).setText("打开弹奏音");
                 Utils.saveConfiguration(this,Constants.KEY_MUTE, true);
             }
+            break;
+        case R.id.switch_sounds:
+            if(Utils.getConfiguration(this, Constants.KEY_IS_JP, false)){
+                ((Button)view).setText("真实钢琴键音");
+                Utils.saveConfiguration(this, Constants.KEY_IS_JP, false);
+            }else{
+                ((Button)view).setText("极品钢琴键音");
+                Utils.saveConfiguration(this, Constants.KEY_IS_JP, true);
+            }
+
+            if(mSoundPlayer!=null){
+                mSoundPlayer.stop();
+            }
+            
+            if(mSoundPool != null){
+                mSoundPool.release();
+            }
+            
+            loadSoundPool();
             break;
         default:
             break;

@@ -12,6 +12,7 @@ public class Constants {
     //SHARED_PREFERENCES_KEY
     public static final String KEY_MUTE="mute_sound";
     public static final String KEY_AUTO_CHANGE_TIME="auto_change_time";
+    public static final String KEY_IS_JP="jp_key";
     
 
     public static final int MAIN_ACTIVITY_REQUEST_CODE=1;
