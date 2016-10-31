@@ -9,11 +9,12 @@
         android:id="@+id/sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="9sp" />
+        android:singleLine="true"
+        android:textSize="7sp" />
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="10dp"
-        android:background="@drawable/white_note_hd" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/white_note_hd" />
 
 </LinearLayout>

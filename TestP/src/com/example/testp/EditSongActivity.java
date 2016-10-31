@@ -344,7 +344,9 @@ public class EditSongActivity extends Activity {
                 mItemsLayout.addView(subEditItemView, index);
                 updateItemsIndex();
                 updateItemsTime(subEditItemView);
-                scrollToEnd();
+                if(index==mItemsLayout.getChildCount()-2){
+                    scrollToEnd();
+                }
             }
         });
         editItemView.setOnTimeChangedListener(mOnTimeChangedListener);

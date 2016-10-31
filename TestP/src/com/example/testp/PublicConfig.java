@@ -11,14 +11,17 @@ public class PublicConfig {
     public static final String SONG_PATH=Environment.getExternalStorageDirectory().getAbsolutePath()+"/songs";
     
     public final static int MAX_SOUNDS = 88;
+
+    public static final int KEY_WIDTH = 60;
     
-    public static final int BLACK_KEY_WIDTH = 2 * 40;
-    public static final int WHITE_KEY_WIDTH = 2 * 60;
+    
+    public static final int WHITE_KEY_WIDTH = 2 * KEY_WIDTH;//120
+    public static final int BLACK_KEY_WIDTH = 4 * (KEY_WIDTH/3);//80
     public static final int WHITE_KEY_LEFT_MARGIN = 1;
 
-    public static final int RHYTHM_VIEW_HEIGTH=40;//音符控件高度
-    public static final int RHYTHM_VIEW_WIDTH=WHITE_KEY_WIDTH-BLACK_KEY_WIDTH;//音符控件高度
-    public static final int RHYTHM_VIEW_ANIM_SPEED=2;//音符控件掉下的速度
-    public static final int RHYTHM_VIEW_END_LINE=440;//音符控件掉下的最低位置
+    public static final int RHYTHM_VIEW_HEIGTH=40;
+    public static final int RHYTHM_VIEW_WIDTH=40;
+    public static final int RHYTHM_VIEW_ANIM_SPEED=2;
+    public static final int RHYTHM_VIEW_END_LINE=440;
 
 }

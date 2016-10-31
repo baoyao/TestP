@@ -44,62 +44,70 @@ public class RhythmController {
 
     // 120-80=40
     private void buildRhythmItem() {
-        int crrentLeftMargin = 0;
+        int whiteKeyWidth=PublicConfig.WHITE_KEY_WIDTH;
+        int rhythmWidth=PublicConfig.RHYTHM_VIEW_WIDTH;
+        int whiteKeyLeftMargin=PublicConfig.WHITE_KEY_LEFT_MARGIN;
+        int whiteKeyWidthAndMargin=whiteKeyWidth+whiteKeyLeftMargin;
+        
+        int inWhiteLeft=(whiteKeyWidth+whiteKeyLeftMargin-rhythmWidth)/2;
+        int inBlackLeft=whiteKeyWidth+whiteKeyLeftMargin-(rhythmWidth/2);
+        
         for (int i = 0; i < mKeyButtonList.size(); i++) {
+            int cellNum=(i-3)/12;
             int leftMargin = 0;
             if (i < 3) {
                 if (i == 0) {
-                    leftMargin = 40 + 1;
+                    leftMargin = inWhiteLeft;
                 } else if (i == 1) {
-                    leftMargin = 20;
+                    leftMargin = inBlackLeft;
                 } else if (i == 2) {
-                    leftMargin = 20 + 1;
+                    leftMargin = whiteKeyWidth+inWhiteLeft;
                 }
             } else {
+                int lastMargin=((cellNum*7)*whiteKeyWidthAndMargin)+(whiteKeyWidthAndMargin*2);
                 int index = getEndKeyNum(i - 3 + 1);
                 switch (index) {
                 case 1:
-                    leftMargin = 40 + 40 + 1;
+                    leftMargin = lastMargin+inWhiteLeft;
                     break;
                 case 2:// b
-                    leftMargin = 20;
+                    leftMargin = lastMargin+inBlackLeft;
                     break;
                 case 3:
-                    leftMargin = 20 + 1;
+                    leftMargin = lastMargin+whiteKeyWidthAndMargin+inWhiteLeft;
                     break;
                 case 4:// b
-                    leftMargin = 20;
+                    leftMargin = lastMargin+whiteKeyWidthAndMargin+inBlackLeft;
                     break;
                 case 5:
-                    leftMargin = 20 + 1;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*2)+inWhiteLeft;
                     break;
                 case 6:
-                    leftMargin = 40 + 40 + 1;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*3)+inWhiteLeft;
                     break;
                 case 7:// b
-                    leftMargin = 20;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*3)+inBlackLeft;
                     break;
                 case 8:
-                    leftMargin = 20 + 1;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*4)+inWhiteLeft;
                     break;
                 case 9:// b
-                    leftMargin = 20;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*4)+inBlackLeft;
                     break;
                 case 10:
-                    leftMargin = 20 + 1;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*5)+inWhiteLeft;
                     break;
                 case 11:// b
-                    leftMargin = 20;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*5)+inBlackLeft;
                     break;
                 case 12:
-                    leftMargin = 20 + 1;
+                    leftMargin = lastMargin+(whiteKeyWidthAndMargin*6)+inWhiteLeft;
                     break;
                 default:
                     break;
                 }
             }
-            mKeyButtonList.get(i).setRhythmViewLeftMargin(crrentLeftMargin + leftMargin);
-            crrentLeftMargin += leftMargin + 40;
+            mKeyButtonList.get(i).setRhythmViewLeftMargin(leftMargin);
         }
     }
 
@@ -118,7 +126,9 @@ public class RhythmController {
         subParams.setMargins(leftMargin, 0, 0, 0);
         rhythmView.setLayoutParams(subParams);
         rhythmView.setTag(soundId+"");
-        ((TextView)rhythmView.findViewById(R.id.sound)).setText(mSoundStr[soundId]);
+        if(PublicConfig.RHYTHM_VIEW_WIDTH >= 40){
+            ((TextView)rhythmView.findViewById(R.id.sound)).setText(mSoundStr[soundId]);
+        }
         return rhythmView;
     }
 
