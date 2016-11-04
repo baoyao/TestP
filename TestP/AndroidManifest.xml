@@ -43,6 +43,12 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
+        <service android:name="org.winplus.serial.utils.SerialPortService">
+            <intent-filter>
+                <action android:name="org.winplus.serial.utils.SerialPortService"/>
+            </intent-filter>
+        </service>
+        <activity android:name="org.winplus.serial.utils.SerialPortActivity"></activity>
     </application>
 
 </manifest>

@@ -3,6 +3,9 @@ package com.example.testp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.winplus.serial.utils.SerialPortActivity;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,7 +17,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -23,7 +29,7 @@ import android.widget.TextView;
 import com.example.testp.KeyButton.OnTouchDownListener;
 import com.example.testp.RhythmController.TimeRecord;
 
-public class MainActivity extends Activity implements OnTouchDownListener {
+public class MainActivity extends SerialPortActivity implements OnTouchDownListener {
 
     private final static int START_LOAD_INDEX = 0;
     private final static int MAX_SOUNDS = PublicConfig.MAX_SOUNDS;
@@ -36,7 +42,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
     private ResultLayout mResult;
     private SeekBar mSpeedController;
     private TextView mSpeedValaue;
-    private LinearLayout mWhiteLayout, mBlackLayout;
+    private HorizontalScrollView mHorizontalScrollView;
+    private LinearLayout mWhiteLayout, mBlackLayout, mKeyLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +61,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         }
         mWhiteLayout = (LinearLayout) this.findViewById(R.id.white_layout);
         mBlackLayout = (LinearLayout) this.findViewById(R.id.black_layout);
+        mKeyLayout = (LinearLayout) this.findViewById(R.id.key_layout);
+        mHorizontalScrollView = (HorizontalScrollView) this.findViewById(R.id.scrollview);
         
         mResult=(ResultLayout) this.findViewById(R.id.result_layout);
         ((Button)this.findViewById(R.id.mute)).setText(Utils.getConfiguration(this,Constants.KEY_MUTE, false)?"打开弹奏音":"关闭弹奏音");
@@ -145,6 +154,8 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                 super.onPostExecute(soundsLength);
                 mWhiteLayout.removeAllViews();
                 mBlackLayout.removeAllViews();
+                calcKeyWidth();
+                
                 List<KeyButton> keyButtonList=new ArrayList<KeyButton>();
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < soundsLength; i++) {
@@ -162,6 +173,11 @@ public class MainActivity extends Activity implements OnTouchDownListener {
                         break;
                     }
                 }
+
+                ViewGroup.LayoutParams bParams=(ViewGroup.LayoutParams)mBlackLayout.getLayoutParams();
+                bParams.height=mWhiteLayout.getHeight()/2;
+                mBlackLayout.setLayoutParams(bParams);
+
                 mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,keyButtonList);
                 dismissDialog();
                 if(mSongJson != null){
@@ -213,9 +229,22 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         view.setBackgroundResource(R.drawable.black_key_selector);
         return view;
     }
+    
+    private void calcKeyWidth(){
+        int[] size=Utils.getScreenSize(MainActivity.this);
+        WHITE_KEY_WIDTH=size[0]/52-WHITE_KEY_LEFT_MARGIN;//52w 36b
+        BLACK_KEY_WIDTH=(WHITE_KEY_WIDTH/3)*2;
+        
+        PublicConfig.BLACK_KEY_WIDTH = BLACK_KEY_WIDTH;
+        PublicConfig.WHITE_KEY_WIDTH = WHITE_KEY_WIDTH;
+        
+        FrameLayout.LayoutParams sParams=(FrameLayout.LayoutParams)mHorizontalScrollView.getLayoutParams();
+        sParams.leftMargin=(size[0]%52)/2;
+        mHorizontalScrollView.setLayoutParams(sParams);
+    }
 
-    private final int BLACK_KEY_WIDTH = PublicConfig.BLACK_KEY_WIDTH;
-    private final int WHITE_KEY_WIDTH = PublicConfig.WHITE_KEY_WIDTH;
+    private int BLACK_KEY_WIDTH = PublicConfig.BLACK_KEY_WIDTH;
+    private int WHITE_KEY_WIDTH = PublicConfig.WHITE_KEY_WIDTH;
     private final int WHITE_KEY_LEFT_MARGIN = PublicConfig.WHITE_KEY_LEFT_MARGIN;
 
     private final int KEY_START_INDEX = 2;
@@ -443,7 +472,7 @@ public class MainActivity extends Activity implements OnTouchDownListener {
             controllerView.setVisibility(View.INVISIBLE);
         }
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -467,6 +496,16 @@ public class MainActivity extends Activity implements OnTouchDownListener {
         if(mSoundPool!=null){
             mSoundPool.release();
         }
+    }
+
+    @Override
+    public void writeDataToSerialPort(String data) {
+        super.writeDataToSerialPort(data);
+    }
+
+    @Override
+    public void onSerialPortCallback(String data) {
+        super.onSerialPortCallback(data);
     }
 
 }
