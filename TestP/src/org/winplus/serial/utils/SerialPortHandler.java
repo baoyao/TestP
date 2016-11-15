@@ -1,14 +1,9 @@
 package org.winplus.serial.utils;
 
-import java.util.List;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -54,9 +49,11 @@ public class SerialPortHandler {
     }
 
     void onCreate(Bundle savedInstanceState) {
-
         if (mContext.getApplicationInfo().targetSdkVersion >= 21) {
-            mContext.bindService(getExplicitIntent(mContext,new Intent(ACTION_SERVICE)), connection, Context.BIND_AUTO_CREATE);
+            Intent intent = new Intent();
+            ComponentName componentName = new ComponentName(mContext.getPackageName(),ACTION_SERVICE);
+            intent.setComponent(componentName);
+            mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE);
         } else {
             mContext.bindService(new Intent(ACTION_SERVICE), connection, Context.BIND_AUTO_CREATE);
         }
@@ -64,26 +61,6 @@ public class SerialPortHandler {
         mReadThread = new ReadThread();
         mReadThread.start();
         Log.v("yzh", "thread start");
-    }
-
-    public static Intent getExplicitIntent(Context context, Intent implicitIntent) {
-        // Retrieve all services that can match the given intent
-        PackageManager pm = context.getPackageManager();
-        List<ResolveInfo> resolveInfo = pm.queryIntentServices(implicitIntent, 0);
-        // Make sure only one match was found
-        if (resolveInfo == null || resolveInfo.size() != 1) {
-            return null;
-        }
-        // Get component info and create ComponentName
-        ResolveInfo serviceInfo = resolveInfo.get(0);
-        String packageName = serviceInfo.serviceInfo.packageName;
-        String className = serviceInfo.serviceInfo.name;
-        ComponentName component = new ComponentName(packageName, className);
-        // Create a new intent. Use the old one for extras and such reuse
-        Intent explicitIntent = new Intent(implicitIntent);
-        // Set the component to be explicit
-        explicitIntent.setComponent(component);
-        return explicitIntent;
     }
 
     void write(String data) {
@@ -121,7 +98,7 @@ public class SerialPortHandler {
     }
 
     // 命令的长度
-    private final int CMD_LENGTH = 9;
+    private final int CMD_LENGTH = 4;
 
     private class ReadThread extends Thread {
         Message msg = new Message();
@@ -149,7 +126,7 @@ public class SerialPortHandler {
 
                         Log.d("yzh", "<Hex> read full size = " + size + "<--->read data = " + toHex(buffer));
                         if (size > 0) {
-                            mHandler.sendMessage(mHandler.obtainMessage(1111, toHex(buffer)));
+                            mHandler.sendMessage(mHandler.obtainMessage(1111, buffer));
                         }
                         size = 0;
                         position = 0;
@@ -173,11 +150,12 @@ public class SerialPortHandler {
         private String str;
 
         public void handleMessage(android.os.Message msg) {
+            byte[] buffer=(byte[]) msg.obj;
             switch (msg.what) {
             case 1111:
-                str = (String) msg.obj;
                 if (mOnDataCallbackListener != null) {
-                    mOnDataCallbackListener.onSerialPortCallback(str);
+                    mOnDataCallbackListener.onSerialPortCallback(toHex(buffer));
+                    mOnDataCallbackListener.onSerialPortCallback(buffer);
                 }
                 break;
             default:
@@ -192,5 +170,6 @@ public class SerialPortHandler {
 
     interface OnDataCallbackListener {
         void onSerialPortCallback(String data);
+        void onSerialPortCallback(byte[] data);
     }
 }

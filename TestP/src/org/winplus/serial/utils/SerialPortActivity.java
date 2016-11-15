@@ -53,4 +53,14 @@ public class SerialPortActivity extends Activity implements OnDataCallbackListen
         
     }
 
+    /**
+     * 此方法是串口返回数据时回调
+     * 往串口发数据请用 {@link #writeDataToSerialPort}
+     */
+    @Override
+    public void onSerialPortCallback(byte[] data) {
+        
+    }
+    
+
 }

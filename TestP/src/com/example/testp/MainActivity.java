@@ -2,6 +2,7 @@ package com.example.testp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.winplus.serial.utils.SerialPortActivity;
@@ -44,6 +45,8 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
     private TextView mSpeedValaue;
     private HorizontalScrollView mHorizontalScrollView;
     private LinearLayout mWhiteLayout, mBlackLayout, mKeyLayout;
+
+    private List<KeyButton> mKeyButtonList=new ArrayList<KeyButton>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +159,7 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
                 mBlackLayout.removeAllViews();
                 calcKeyWidth();
                 
-                List<KeyButton> keyButtonList=new ArrayList<KeyButton>();
+                mKeyButtonList.clear();
                 int count = 0;
                 for (int i = START_LOAD_INDEX; i < soundsLength; i++) {
                     count++;
@@ -168,7 +171,7 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
                         keyButton=buildWhiteKey(count, (i + 1));
                         mWhiteLayout.addView(keyButton);
                     }
-                    keyButtonList.add(keyButton);
+                    mKeyButtonList.add(keyButton);
                     if (count >= MAX_SOUNDS) {
                         break;
                     }
@@ -178,7 +181,7 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
                 bParams.height=mWhiteLayout.getHeight()/2;
                 mBlackLayout.setLayoutParams(bParams);
 
-                mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,keyButtonList);
+                mSoundPlayer = new SoundPlayer(MainActivity.this,mSoundPool,mKeyButtonList);
                 dismissDialog();
                 if(mSongJson != null){
                     play();
@@ -226,6 +229,7 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
         view.setLayoutParams(params);
         view.setOnTouchDownListener(this);
         view.setSoundId(soundId);
+        view.setBlackKey(true);
         view.setBackgroundResource(R.drawable.black_key_selector);
         return view;
     }
@@ -285,6 +289,7 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
         view.setLayoutParams(params);
         view.setOnTouchDownListener(this);
         view.setSoundId(soundId);
+        view.setBlackKey(false);
         view.setBackgroundResource(R.drawable.white_key_selector);
         return view;
     }
@@ -506,6 +511,36 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
     @Override
     public void onSerialPortCallback(String data) {
         super.onSerialPortCallback(data);
+        Log.v("tt", "onSerialPortCallbackString: "+data);
+    }
+
+    // S+01+1+O
+    @Override
+    public void onSerialPortCallback(byte[] data) {
+        try {
+            Log.v("tt", "onSerialPortCallbackByte: " + Arrays.toString(data));
+            KeyButton keyButton = mKeyButtonList.get(data[1]);
+            if (keyButton.isBlackKey()) {
+                if (data[2] == 1) {
+                    Log.v("tt", "black key down");
+                    keyButton.setBackgroundResource(R.drawable.black_down);
+                } else {
+                    Log.v("tt", "black key up");
+                    keyButton.setBackgroundResource(R.drawable.black_up);
+                }
+            } else {
+                if (data[2] == 1) {
+                    Log.v("tt", "white key down");
+                    keyButton.setBackgroundResource(R.drawable.white_down);
+                } else {
+                    Log.v("tt", "white key up");
+                    keyButton.setBackgroundResource(R.drawable.white_up);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.v("tt", "onSerialPortCallbackByte Exception" + e);
+        }
     }
 
 }

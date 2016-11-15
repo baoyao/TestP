@@ -17,6 +17,8 @@ public class KeyButton extends Button {
     
     private int soundId;
     
+    private boolean isBlackKey;
+    
 
     public KeyButton(Context context) {
         this(context, null, 0);
@@ -32,6 +34,14 @@ public class KeyButton extends Button {
         super(context, attrs, defStyle);
     }
     
+    public boolean isBlackKey() {
+        return isBlackKey;
+    }
+
+    public void setBlackKey(boolean isBlackKey) {
+        this.isBlackKey = isBlackKey;
+    }
+
     public int getKeyId() {
         return keyId;
     }
