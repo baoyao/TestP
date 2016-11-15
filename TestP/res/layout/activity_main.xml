@@ -171,7 +171,6 @@
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/button_selector"
                 android:onClick="onControlButtonClick"
-                android:visibility="invisible"
                 android:text="极品钢琴键音" />
         </LinearLayout>
     </LinearLayout>

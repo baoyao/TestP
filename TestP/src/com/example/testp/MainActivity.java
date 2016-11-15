@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.winplus.serial.utils.HexUtils;
 import org.winplus.serial.utils.SerialPortActivity;
 
 import android.app.Activity;
@@ -348,8 +349,12 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
     @Override
     public void onTouchDown(View v) {
         int sId = ((KeyButton) v).getSoundId();
-        mSoundPool.play(sId, 1, 1, 0, 0, 1);
-        showResult(sId);
+        onKeyDown(sId);
+    }
+    
+    private void onKeyDown(int keyIndex){
+        mSoundPool.play(keyIndex, 1, 1, 0, 0, 1);
+        showResult(keyIndex);
     }
     
     private void showResult(int soundId){
@@ -519,28 +524,45 @@ public class MainActivity extends SerialPortActivity implements OnTouchDownListe
     public void onSerialPortCallback(byte[] data) {
         try {
             Log.v("tt", "onSerialPortCallbackByte: " + Arrays.toString(data));
-            KeyButton keyButton = mKeyButtonList.get(data[1]);
+            int keyIndex=str2Int(byte2Str(data[1])+byte2Str(data[2]));
+            boolean isDown=byte2Int(data[3])==1;
+            
+            KeyButton keyButton = mKeyButtonList.get(keyIndex-1);
             if (keyButton.isBlackKey()) {
-                if (data[2] == 1) {
-                    Log.v("tt", "black key down");
+                if (isDown) {
+                    Log.v("tt", keyIndex+" black key down");
                     keyButton.setBackgroundResource(R.drawable.black_down);
+                    onKeyDown(keyIndex);
                 } else {
-                    Log.v("tt", "black key up");
-                    keyButton.setBackgroundResource(R.drawable.black_up);
+                    Log.v("tt", keyIndex+" black key up");
+                    keyButton.setBackgroundResource(R.drawable.black_key_selector);
                 }
             } else {
-                if (data[2] == 1) {
-                    Log.v("tt", "white key down");
+                if (isDown) {
+                    Log.v("tt", keyIndex+" white key down");
                     keyButton.setBackgroundResource(R.drawable.white_down);
+                    onKeyDown(keyIndex);
                 } else {
-                    Log.v("tt", "white key up");
-                    keyButton.setBackgroundResource(R.drawable.white_up);
+                    Log.v("tt", keyIndex+" white key up");
+                    keyButton.setBackgroundResource(R.drawable.white_key_selector);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("tt", "onSerialPortCallbackByte Exception" + e);
         }
+    }
+
+    private int byte2Int(byte bytes){
+        return str2Int(byte2Str(bytes));
+    }
+    
+    private String byte2Str(byte bytes){
+        return HexUtils.hexStr2Str(HexUtils.byte2HexStr(new byte[]{bytes}));
+    }
+    
+    private int str2Int(String str){
+        return Integer.parseInt(str);
     }
 
 }
