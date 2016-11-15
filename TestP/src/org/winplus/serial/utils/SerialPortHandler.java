@@ -98,7 +98,7 @@ public class SerialPortHandler {
     }
 
     // 命令的长度
-    private final int CMD_LENGTH = 4;
+    private final int CMD_LENGTH = 5;
 
     private class ReadThread extends Thread {
         Message msg = new Message();
